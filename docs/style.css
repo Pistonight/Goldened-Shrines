@@ -1,0 +1,48 @@
+
+body {
+    margin: 0;
+}
+
+.main-div {
+    width: 64vw;
+    margin: 0 18vw;
+}
+
+h2 {
+    margin: 0;
+    text-align: center;
+    padding: 20px
+}
+
+p {
+    margin: 0;
+    padding: 10px
+}
+
+body {
+    background-color: white;
+    color: black;
+}
+
+.main-div {
+    background-color: #eeeeee;
+}
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: black;
+        color: white;
+    }
+    
+    .main-div {
+        background-color: #333333;
+    }
+    
+    a {
+        color: cyan;
+    }
+    a:visited{
+        color: yellow
+    }
+}
+
+
