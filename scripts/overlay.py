@@ -20,7 +20,7 @@ SPLIT_NAME_X=80
 SPLIT_TIME_X=272
 SEG_TIME_X=182
 TIMES_Y = 26
-SEG_TIMER_X=450
+SEG_TIMER_X=466
 
 def load_fonts():
     return {
@@ -65,10 +65,10 @@ def get_base_image(seg_name, seg_time_info, fonts):
             ))
 
     runner_width = draw.textlength(runner, font=runner_font)
-    x = int(376+((236-runner_width)/2))
+    x = int(300+((312-runner_width)/2))
     draw.text((x, 212), runner, fill=COLOR_GOLD,font=runner_font)
 
-    draw.text((286,172), segment_num, fill=COLOR_BLACK,font=number_font)
+    draw.text((302,172), segment_num, fill=COLOR_BLACK,font=number_font)
 
     is_current = False
     is_after = False
@@ -118,8 +118,8 @@ def draw_frame(base_image, start_frame, frame, fonts):
     number_font = fonts["number"]
 
     x=538-draw.textlength(time_no_ms, font=timer_font_big)
-    draw.text((x,276), time_no_ms, fill=COLOR_GOLD,font=timer_font_big)
-    draw.text((540,286), time_ms, fill=COLOR_GOLD,font=timer_font_small)
+    draw.text((x,276), time_no_ms, fill=COLOR_WHITE,font=timer_font_big)
+    draw.text((540,286), time_ms, fill=COLOR_WHITE,font=timer_font_small)
 
     x=SEG_TIMER_X-draw.textlength(seg_time, font=number_font)
     draw.text((x,172), seg_time, fill=COLOR_GOLD, font=number_font)

@@ -1,6 +1,6 @@
 
 from proc import ProcessHolder
-from taskdefs import ITaskDefinition, TaskType, TaskDefDownload, TaskDefTime, TaskDefGenerateSplits
+from taskdefs import ITaskDefinition, TaskType, TaskDefDownload, TaskDefTime, TaskDefGenerateSplits, TaskDefEncodeOverlay
 
 class Task:
     def __init__(self, task_def: ITaskDefinition):
@@ -259,3 +259,5 @@ class TaskManager:
             return Task(TaskDefGenerateSplits(segment, segment_name, 13))
         if type == TaskType.GenerateSplit_e:
             return Task(TaskDefGenerateSplits(segment, segment_name, 14))
+        if type == TaskType.EncodeOverlay:
+            return Task(TaskDefEncodeOverlay(segment, segment_name))

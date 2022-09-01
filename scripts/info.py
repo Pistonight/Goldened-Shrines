@@ -17,7 +17,7 @@ def get_seg_source_mp4(segment):
     return f"build/download/{segment}.mp4"
 
 def get_seg_overlay_mp4(segment):
-    return f"segments/{segment}/overlay.mp4"
+    return f"build/encode/{segment}.mp4"
 
 def get_seg_time_toml(segment):
     return f"build/time/{segment}.time.toml"

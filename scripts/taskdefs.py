@@ -186,6 +186,70 @@ class TaskDefGenerateSplits(ITaskDefinition):
             f"build/logs/{self.segment_name}.splits{self.seed}"
         )
 
+class TaskDefEncodeOverlay:
+    def __init__(self, segment, segment_name):
+        self.segment = segment
+        self.segment_name = segment_name
+    def is_gpu(self):
+        return True
+    def get_description(self):
+        return f"\033[1;34mEncode Overlay for {self.segment_name}                                                      \033[0m"
+    def get_dependencies(self):
+        return [
+            (TaskType.GenerateSplit_0, self.segment),
+            (TaskType.GenerateSplit_1, self.segment),
+            (TaskType.GenerateSplit_2, self.segment),
+            (TaskType.GenerateSplit_3, self.segment),
+            (TaskType.GenerateSplit_4, self.segment),
+            (TaskType.GenerateSplit_5, self.segment),
+            (TaskType.GenerateSplit_6, self.segment),
+            (TaskType.GenerateSplit_7, self.segment),
+            (TaskType.GenerateSplit_8, self.segment),
+            (TaskType.GenerateSplit_9, self.segment),
+            (TaskType.GenerateSplit_a, self.segment),
+            (TaskType.GenerateSplit_b, self.segment),
+            (TaskType.GenerateSplit_c, self.segment),
+            (TaskType.GenerateSplit_d, self.segment),
+            (TaskType.GenerateSplit_e, self.segment),
+        ]
+
+    def update_hash(self, do_update):
+        return hash.test_files(
+             f"build/hash/{self.segment_name}.encode.hash.txt",
+            [
+                info.format_seg_split_frame(self.segment_name, 0),
+                info.get_seg_source_mp4(self.segment_name),
+                info.get_seg_overlay_mp4(self.segment_name)
+            ],
+            do_update
+        )
+    def prepare(self):
+        os.makedirs("build/encode", exist_ok=True)
+
+    def execute(self):
+        return start_subprocess(
+            [
+                "ffmpeg.exe",
+                "-y",
+                "-hwaccel",               "nvdec",
+                "-hwaccel_output_format", "cuda",
+                "-i",                     info.get_seg_source_mp4(self.segment_name),
+                "-framerate",             "30",
+                "-thread_queue_size",     "4096",
+                "-i",                     info.get_seg_split_overlay_series(self.segment_name),
+                "-filter_complex", 
+                "scale_cuda=1920:1080,hwdownload,format=nv12 [base]; [base][1:v]overlay=10:728 [out]",
+                "-map",                   "[out]", 
+                "-map",                   "0:a",
+                "-c:v",                   "h264_nvenc",
+                "-c:a",                   "copy",
+                "-b:v",                   "6M",
+                "-fps_mode",              "passthrough",
+                info.get_seg_overlay_mp4(self.segment_name)
+            ],
+            f"build/logs/{self.segment_name}.encode"
+        )
+
 class TaskDefGenerateMergeVideo:
     def __init__(self, total_segments):
         self.total_Segments = total_segments
