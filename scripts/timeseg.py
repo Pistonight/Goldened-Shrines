@@ -1,9 +1,27 @@
-"""Compute times.gen.toml for segments"""
-import wrapper
+"""Compute time.toml for segments"""
+# time.py <seg name> <context> <context> <context> <context> <context> <context>
 import info
+import subprocess
+import sys
 
-def compute_time(seg_name, context):
-    seg_time = wrapper.execute_get_frame_count(seg_name)
+def execute_get_frame_count(seg_name):
+    result = subprocess.run(
+        ["ffprobe.exe","-i",
+         info.get_seg_source_mp4(seg_name),
+         "-v", "error",
+         "-count_packets",
+         "-select_streams", "v:0",
+         "-show_entries", "stream=nb_read_packets",
+         "-of", "csv=p=0"],
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.DEVNULL)
+    if result.returncode != 0:
+        sys.exit(result.returncode)
+    return int(result.stdout)
+
+def compute_time(seg_name: str, context: list[str]):
+    seg_time = execute_get_frame_count(seg_name)
     
     before = None
     for context_name in context:
@@ -60,3 +78,8 @@ def compute_time(seg_name, context):
     }
 
     info.set_seg_time_info(seg_name, output_obj)
+
+if __name__ == "__main__":
+    seg_name = sys.argv[1]
+    context = sys.argv[2:8]
+    compute_time(seg_name,context)

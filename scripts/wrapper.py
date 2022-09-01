@@ -18,15 +18,6 @@ def execute_clean_segment(seg_name):
         if os.path.exists(p):
             os.remove(p)
 
-def execute_download_segment(seg_name):
-    link = info.get_seg_info(seg_name, "link")
-    result = subprocess.run(
-        ["yt-dlp.exe", link, "-o", info.get_seg_source_mp4(seg_name)], 
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.STDOUT)
-    if result.returncode != 0:
-        sys.exit(result.returncode)
-
 def execute_get_frame_count(seg_name):
     result = subprocess.run(
         ["ffprobe.exe","-i",

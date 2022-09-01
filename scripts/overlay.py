@@ -1,8 +1,9 @@
 """Generate split images"""
-
+# overlay.py <seg name> <seed> <step>
 import info
 from tc import frm_to_strh
 from PIL import Image, ImageDraw, ImageFont
+import sys
 
 BACKGROUND_PATH="docs/images/Background.png"
 TIMER_FONT_PATH="docs/fonts/Calibri-Bold.ttf"
@@ -21,10 +22,17 @@ SEG_TIME_X=182
 TIMES_Y = 26
 SEG_TIMER_X=450
 
-def get_base_image(seg_name, seg_time_info, fonts=None):
+def load_fonts():
+    return {
+        "timer_big": ImageFont.truetype(TIMER_FONT_PATH, 52),
+        "timer_small": ImageFont.truetype(TIMER_FONT_PATH, 40),
+        "runner": ImageFont.truetype(TEXT_FONT_PATH, 36),
+        "split_name": ImageFont.truetype(TEXT_FONT_PATH, 20),
+        "number": ImageFont.truetype(TIME_FONT_PATH, 24),
+        "number_small": ImageFont.truetype(TIME_FONT_PATH, 20)
+    }
 
-    if fonts is None:
-        fonts = load_fonts()
+def get_base_image(seg_name, seg_time_info, fonts):
     runner_font = fonts["runner"]
     number_font = fonts["number"]
     split_name_font = fonts["split_name"]
@@ -117,22 +125,17 @@ def draw_frame(base_image, start_frame, frame, fonts):
     draw.text((x,172), seg_time, fill=COLOR_GOLD, font=number_font)
     return image
 
-def generate_overlay(segment):
-    info.ensure_seg_split_overlay_dir(segment)
-    time_info = info.get_seg_time_info(segment, None)
+def generate_overlay(segment, seed, step):
     fonts = load_fonts()
+    time_info = info.get_seg_time_info(segment, None)
     base = get_base_image(segment, time_info, fonts)
     start = time_info["start_frame"]
-    for i in range(time_info["segment_time"]):
+    for i in range(seed, time_info["segment_time"], step):
         frame_image = draw_frame(base, start, i, fonts)
         info.set_seg_split_overlay_frame(segment, frame_image, i)
 
-def load_fonts():
-    return {
-        "timer_big": ImageFont.truetype(TIMER_FONT_PATH, 52),
-        "timer_small": ImageFont.truetype(TIMER_FONT_PATH, 40),
-        "runner": ImageFont.truetype(TEXT_FONT_PATH, 36),
-        "split_name": ImageFont.truetype(TEXT_FONT_PATH, 20),
-        "number": ImageFont.truetype(TIME_FONT_PATH, 24),
-        "number_small": ImageFont.truetype(TIME_FONT_PATH, 20)
-    }
+if __name__ == "__main__":
+    segment = sys.argv[1]
+    seed = int(sys.argv[2])
+    step = int(sys.argv[3])
+    generate_overlay(segment, seed, step)

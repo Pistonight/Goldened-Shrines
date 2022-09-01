@@ -1,3 +1,4 @@
+"""Timecode manipulation"""
 import sys
 
 FRAME_PER_SECOND = 30

@@ -304,35 +304,6 @@ def manager_main(tasks, only_segment, should_clean, should_download, after):
                     print(f"[FAIL] {get_description(task, seg_names[seg])}")
         print("BUILD FAILED")
 
-def get_context_seg_names(seg_id, seg_names):
-    if seg_id < 3:
-        start = 0
-    elif seg_id == len(seg_names)-1:
-        start = seg_id - 5
-    elif seg_id == len(seg_names)-2:
-        start = seg_id - 4
-    else:
-        start = seg_id - 3
-    return seg_names[start:start+6]
-
-def str_to_task(task_name):
-    if task_name == "clean":
-        return TASK_CLEAN
-    if task_name == "download":
-        return TASK_DOWNLOAD
-    if task_name == "time":
-        return TASK_TIME
-    if task_name == "generate":
-        return TASK_GENERATE
-    if task_name in ("overlay", "patch"):
-        return TASK_OVERLAY
-    if task_name == "table":
-        return TASK_TABLE
-    if task_name == "website":
-        return TASK_WEBSITE
-    if task_name in ("merge", "render"):
-        return TASK_MERGE
-    return None
 
 if __name__ == "__main__":
     should_clean = False

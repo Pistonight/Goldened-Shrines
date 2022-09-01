@@ -92,7 +92,7 @@ def add_tasks_from_name(task_name, tasks: set[TaskType]):
     if task_name == "time":
         tasks.add(TaskType.GenerateTime)
         return True
-    if task_name in ("generate", "split"):
+    if task_name in ("generate", "split", "splits"):
         tasks.add(TaskType.GenerateSplit_0)
         tasks.add(TaskType.GenerateSplit_1)
         tasks.add(TaskType.GenerateSplit_2)

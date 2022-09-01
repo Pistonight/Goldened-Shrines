@@ -81,9 +81,9 @@ class TaskDefDownload(ITaskDefinition):
         super().__init__()
         self.segment_name = segment_name
     def output_mp4(self):
-        return f"build/download/{self.segment_name}.mp4"
+        return info.get_seg_source_mp4(self.segment_name)
     def get_description(self):
-        return f"\033[1;31mDowload {self.output_mp4()}\033[0m"
+        return f"\033[1;31mDownload {self.output_mp4()}                               \033[0m"
     def get_dependencies(self):
         return []
     def update_hash(self, do_update):
@@ -111,11 +111,86 @@ class TaskDefDownload(ITaskDefinition):
             f"build/logs/{self.segment_name}.download"
         )
 
+class TaskDefTime(ITaskDefinition):
+    def __init__(self, segment, segment_name, segment_context) -> None:
+        super().__init__()
+        self.segment = segment
+        self.segment_name = segment_name
+        self.segment_context = segment_context
+
+    def input_mp4(self):
+        return info.get_seg_source_mp4(self.segment_name)
+    def output_toml(self):
+        return info.get_seg_time_toml(self.segment_name)
+    def get_description(self):
+        return f"\033[1;32mTime {self.input_mp4()}                                  \033[0m"
+    def get_dependencies(self):
+        deps = [(TaskType.Download, self.segment)]
+        if self.segment > 0:
+            deps.append((TaskType.GenerateTime, self.segment-1))
+        return deps
+    def update_hash(self, do_update):
+        return hash.test_files(
+            f"build/hash/{self.segment_name}.time.hash.txt",
+            [
+                self.output_toml(),
+                self.input_mp4(),
+                info.get_seg_name_file()
+            ],
+            do_update
+        )
+    def prepare(self):
+        os.makedirs("build/time", exist_ok=True)
+    def execute(self):
+        args = [
+                    "python3", "scripts/timeseg.py",
+                    self.segment_name
+                ]
+        for context_name in self.segment_context:
+            args.append(context_name)
+        return start_subprocess(args,f"build/logs/{self.segment_name}.time")
+
+GENERATE_SPLIT_STEP = 15
+class TaskDefGenerateSplits(ITaskDefinition):
+    def __init__(self, segment, segment_name, seed) -> None:
+        super().__init__()
+        self.segment = segment
+        self.segment_name = segment_name
+        self.seed = seed
+
+    def input_toml(self):
+        return info.get_seg_time_toml(self.segment_name)
+    def get_description(self):
+        return f"\033[1;33mGenerate Splits for {self.segment_name} (Group {self.seed+1})                  \033[0m"
+    def get_dependencies(self):
+        return [(TaskType.GenerateTime, self.segment)]
+    def update_hash(self, do_update):
+        return hash.test_files(
+            f"build/hash/{self.segment_name}.split{self.seed}.hash.txt",
+            [
+                self.input_toml(),
+                info.format_seg_split_frame(self.segment_name, self.seed)
+            ],
+            do_update
+        )
+    def prepare(self):
+        os.makedirs(info.get_seg_split_overlay_dir(self.segment_name), exist_ok=True)
+    def execute(self):
+        return start_subprocess(
+            [
+                "python3", "scripts/overlay.py",
+                self.segment_name,
+                str(self.seed),
+                str(GENERATE_SPLIT_STEP)
+            ],
+            f"build/logs/{self.segment_name}.splits{self.seed}"
+        )
+
 class TaskDefGenerateMergeVideo:
     def __init__(self, total_segments):
         self.total_Segments = total_segments
     def get_description(self):
-        return "Merging final video"
+        return "Merge final video                                                                 "
     def get_dependencies(self):
         deps = []
         for s in range(self.total_segments):

@@ -1,6 +1,6 @@
 
 from proc import ProcessHolder
-from taskdefs import ITaskDefinition, TaskType, TaskDefDownload
+from taskdefs import ITaskDefinition, TaskType, TaskDefDownload, TaskDefTime, TaskDefGenerateSplits
 
 class Task:
     def __init__(self, task_def: ITaskDefinition):
@@ -180,7 +180,7 @@ class TaskManager:
         if self.total == 0:
             progress = "Calculating tasks"
         else:
-            progress = f"{self.completed} Completed ({self.skipped} Skipped). {self.total} Total. {self.failed} Failed.   "
+            progress = f"{self.completed}/{self.total} Completed ({self.skipped} Cache Hit). {self.failed} Failed.   "
         
         elapsed = self.process_holder.elapsed_time()
         
@@ -215,6 +215,47 @@ class TaskManager:
             print("BUILD FAILED") 
 
     def task_factory(self, type: TaskType, segment: int) -> Task:
+        segment_name = self.segment_names[segment]
         if type == TaskType.Download:
-            return Task(TaskDefDownload(self.segment_names[segment]))
-        
+            return Task(TaskDefDownload(segment_name))
+        if type == TaskType.GenerateTime:
+            if segment < 3:
+                start = 0
+            elif segment == len(self.segment_names)-1:
+                start = segment - 5
+            elif segment == len(self.segment_names)-2:
+                start = segment - 4
+            else:
+                start = segment - 3
+            context = self.segment_names[start:start+6]
+            return Task(TaskDefTime(segment, segment_name, context))
+        if type == TaskType.GenerateSplit_0:
+            return Task(TaskDefGenerateSplits(segment, segment_name, 0))
+        if type == TaskType.GenerateSplit_1:
+            return Task(TaskDefGenerateSplits(segment, segment_name, 1))
+        if type == TaskType.GenerateSplit_2:
+            return Task(TaskDefGenerateSplits(segment, segment_name, 2))
+        if type == TaskType.GenerateSplit_3:
+            return Task(TaskDefGenerateSplits(segment, segment_name, 3))
+        if type == TaskType.GenerateSplit_4:
+            return Task(TaskDefGenerateSplits(segment, segment_name, 4))
+        if type == TaskType.GenerateSplit_5:
+            return Task(TaskDefGenerateSplits(segment, segment_name, 5))
+        if type == TaskType.GenerateSplit_6:
+            return Task(TaskDefGenerateSplits(segment, segment_name, 6))
+        if type == TaskType.GenerateSplit_7:
+            return Task(TaskDefGenerateSplits(segment, segment_name, 7))
+        if type == TaskType.GenerateSplit_8:
+            return Task(TaskDefGenerateSplits(segment, segment_name, 8))
+        if type == TaskType.GenerateSplit_9:
+            return Task(TaskDefGenerateSplits(segment, segment_name, 9))
+        if type == TaskType.GenerateSplit_a:
+            return Task(TaskDefGenerateSplits(segment, segment_name, 10))
+        if type == TaskType.GenerateSplit_b:
+            return Task(TaskDefGenerateSplits(segment, segment_name, 11))
+        if type == TaskType.GenerateSplit_c:
+            return Task(TaskDefGenerateSplits(segment, segment_name, 12))
+        if type == TaskType.GenerateSplit_d:
+            return Task(TaskDefGenerateSplits(segment, segment_name, 13))
+        if type == TaskType.GenerateSplit_e:
+            return Task(TaskDefGenerateSplits(segment, segment_name, 14))
