@@ -76,13 +76,14 @@ class ITaskDefinition:
         """Run setup, like creating build directories. This is executed synchronously on the main process"""
         pass
 
-class TaskDefDownload:
+class TaskDefDownload(ITaskDefinition):
     def __init__(self, segment_name) -> None:
+        super().__init__()
         self.segment_name = segment_name
     def output_mp4(self):
         return f"build/download/{self.segment_name}.mp4"
     def get_description(self):
-        return f"\033[1;31mDowloading {self.output_mp4()}\033[0m"
+        return f"\033[1;31mDowload {self.output_mp4()}\033[0m"
     def get_dependencies(self):
         return []
     def update_hash(self, do_update):

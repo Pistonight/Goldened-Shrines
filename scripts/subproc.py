@@ -1,15 +1,14 @@
 from multiprocessing import Process
 import subprocess
 import sys
-def subproc_main(args):
+def subproc_main(subprocess_args, log):
     """Entry point for task sub processes"""
-    subprocess_args, log = args
     with open(f"{log}.out.txt", "w+", encoding="utf-8") as stdout_file:
-        with open(f"{log}.err.txt", "w+", encoding="utf-8") as stdout_file:
+        with open(f"{log}.err.txt", "w+", encoding="utf-8") as stderr_file:
             result = subprocess.run(
                 subprocess_args,
                 stdout=stdout_file,
-                stderr=stdout_file
+                stderr=stderr_file
             )
     
     sys.exit(result.returncode)

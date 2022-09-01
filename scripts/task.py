@@ -1,6 +1,6 @@
 
 from proc import ProcessHolder
-from taskdefs import ITaskDefinition, TaskType
+from taskdefs import ITaskDefinition, TaskType, TaskDefDownload
 
 class Task:
     def __init__(self, task_def: ITaskDefinition):
@@ -37,7 +37,7 @@ class Task:
 class TaskManager:
     def __init__(self, gpu_limit):
         self.process_holder = ProcessHolder()
-        self.process_holder.start(None)
+        self.process_holder.start(None, None)
         self.segment_names = None
         self.task_matrix = dict()
         self.task_queue = []
@@ -161,7 +161,7 @@ class TaskManager:
                 return_task = task
                 break
         self.task_queue.extend(polled)
-        if task.is_gpu():
+        if return_task is not None and return_task.is_gpu():
             self.gpu_usage+=1
         return return_task
 
@@ -200,9 +200,10 @@ class TaskManager:
         self.last_up_line = line
 
     def print_report(self):
+        print()
         fails = []
-        for task_type_tasks in self.task_matrix:
-            for task in task_type_tasks:
+        for task_type in self.task_matrix:
+            for task in self.task_matrix[task_type]:
                 if task is not None and task.is_failed():
                     fails.append(task.get_description())
         if not fails:
@@ -213,5 +214,7 @@ class TaskManager:
             print()
             print("BUILD FAILED") 
 
-    def task_factory(type, segment) -> Task:
-        pass
+    def task_factory(self, type: TaskType, segment: int) -> Task:
+        if type == TaskType.Download:
+            return Task(TaskDefDownload(self.segment_names[segment]))
+        

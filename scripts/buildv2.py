@@ -34,8 +34,9 @@ def build_main(task_types: set[TaskType], input_segments: list[str], build_confi
             task_manager.schedule_task(t, s)
 
     task_manager.queue_scheduled_tasks()
+    task_manager.print_status(processes)
     if task_manager.is_queue_empty():
-        print("No build targets provided")
+        task_manager.print_report()
         return
 
     os.makedirs("build/logs", exist_ok=True)
@@ -80,7 +81,6 @@ def build_main(task_types: set[TaskType], input_segments: list[str], build_confi
             break
         if not did_print_this_loop:
             task_manager.print_status(processes)
-    print()
 
     # Report
     task_manager.print_report()
@@ -135,7 +135,7 @@ if __name__ == "__main__":
         if arg == "clean":
             clean = True
             continue
-        if not add_tasks_from_name(arg):
+        if not add_tasks_from_name(arg, tasks):
             segments.append(arg)
     
     if clean:
