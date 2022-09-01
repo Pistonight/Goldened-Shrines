@@ -17,29 +17,20 @@ The project uses 120 Shrine segments, 12 Warp segments, 1 Tower segment, 1 Plate
 
 See [the reference page](docs/reference/README.md) for examples of the start/end frames. In the descriptions below, the first and last frames are inclusive.
 
-**Timing for first segment (Ja Baij)** is from first frame of the run to first frame before cage break. When the cage breaks as you complete a shrine, it starts glowing, then the glow stops for 1 frame, then the cage starts breaking. The 1 frame where the glow stops is the last frame of this segment
-
-**Timing for Tower segment** is from first frame of cage break (the frame after the frame where the glow stops), to the last frame where the terminal is not glowing
-
-**Timing for magnesis segment (Oman Au)** is from first frame of an orange glow being visible on the tower terminal, to the frame of cage not glowing before breaking
-
-**Timing for shrine-to-shrine segment** is from the first frame of cage breaking to the frame of cage not glowing before breaking
-
-**Timing for paraglider segment** is from first frame of cage breaking, to the frame where the triangle is smaller
-
-**Timing for paraglider-shrine segment** is from the frame after the triangle being smaller to the frame before cage break
-
-**Timing for shrine-to-warp segment** is from first frame of cage break to the frame before the screen is completely dark after warp animation
-
-**Timing for warp-to-shrine segment** is from first frame of screen is completely dark to the frame before cage break
-
-**Timing for castle segment** is from first frame of cage break to last frame of windblight not exploding
-
-**Timing for blights segment** is from first frame of windblight exploding to last frame before the screen is completely dark after thunderblight is dead
-
-**Timing for calamity segment** is from the first frame of screen being completely dark after thunderblight is dead, to the last frame of screen not being completely white after calamity is dead
-
-**Timing for dark beast segment** is from the first frame of screen being completely white after calamity is dead, to the last frame of dark beast's health bar is not white after firing the final shot
+| Timing | First Frame|Last Frame|
+|--|--|--|
+| **First segment (Ja Baij)** |First frame of the run|Last frame before cage break|
+|**Tower segment**|First frame of cage break|Last frame where the terminal is not glowing|
+|**Magnesis segment (Oman Au)**|First frame of an orange glow being visible on the tower terminal|Last frame before cage break|
+|**Shrine-to-Shrine segments**|First frame of cage breaking |Last frame before cage break|
+|**Paraglider segment**|First frame of cage breaking|Frame where the triangle is smaller|
+|**Paraglider-shrine segment (Bosh Kala)**|The frame after the triangle being smaller|Last frame before cage break|
+|**Shrine-to-warp segments**|First frame of cage break|The frame before the screen is completely dark after warp animation|
+|**Warp-to-shrine segments**|First frame of screen is completely dark|Last frame before cage break|
+|**Castle segment**|First frame of cage break|Last frame of windblight not exploding|
+|**Blights segment**|First frame of windblight exploding|Last frame before the screen is completely dark after thunderblight is dead|
+|**Calamity segment**|First frame of screen being completely dark after thunderblight is dead|Last frame of screen not being completely white after calamity is dead
+|**Dark beast segment**|First frame of screen being completely white after calamity is dead|Last frame of dark beast's health bar is not white after firing the final shot
 
 I have a script that will splice and time the segment submissions. **I am the single source of truth for timing** to avoid any confusion.
 
@@ -67,6 +58,7 @@ For your segment to be considered, it must meet these requirements:
       - Not getting shield of minds eye in Taloh Naeg segment
       - Getting medoh cutscene before entering Akh Vaquot and therefore have a faster Bareeda Naeg segment
       - Skipping setting time of day because it happened to be the right time of day during the run for some reason
+      - Note that other segments of the same run can still be valid, if there are inconsistencies in some segments
 7. **Must not scan amiibo or use the amiibo prompt at a shrine not specified by the route**
     - Using amiibo prompt to activate SCW is allowed for Joloo Nah only, to avoid complications. However, if there is a combination of segments that result in a significantly faster time and only used amiibo prompt once, for another shrine, it will be considered
 
@@ -77,6 +69,9 @@ Additionally, it's preferable if the segment also meets the following:
 3. Recorded using a capture device. If it's recorded with a camera over the console screen, it may be rejected if the recording quality is too low
 4. Played on switch. Wii U is allowed if there's no major inconsistencies between switch and Wii U for that segment
 5. Have clean gameplay audio only. This is a very minor factor and your segment will not be rejected solely because you have another audio source. However, it is recommended to setup a track in your recording software that only captures game audio, so it can be separated from the other audio sources
+
+#### How to submit
+Please DM submissions to me on discord.
 
 Needless to say, your segment also needs to be at least as fast as the current segment. In case of a tie, the one with better movement will be chosen, or you can convince me to use yours instead of the existing one.
 
