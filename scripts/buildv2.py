@@ -15,10 +15,10 @@ def build_main(task_types: set[TaskType], input_segments: list[str], build_confi
     processes: list[ProcessHolder] = []
     for _ in range(build_config.subprocesses):
         processes.append(ProcessHolder())
-
+    task_manager.print_status("Loading segment info", processes)
     segment_names = info.load_seg_names()
+    task_manager.print_status("Initializing tasks  ", processes)
     task_manager.initialize(segment_names)
-    task_manager.print_status(processes)
 
     segments = []
     if not input_segments:
@@ -28,13 +28,22 @@ def build_main(task_types: set[TaskType], input_segments: list[str], build_confi
         for input_segment in input_segments:
             seg_id = segment_names.index(input_segment) # exception if not found
             segments.append(seg_id)
+    task_manager.print_status("Checking what needs to be done    ", processes)
 
-    for s in segments:
-        for t in task_types:
-            task_manager.schedule_task(t, s)
-
+    for t in task_types:
+        if t in (
+            TaskType.GenerateMergeVideo, 
+            TaskType.GenerateWebPage, 
+            TaskType.GenerateTimeTable
+        ):
+            task_manager.schedule_task(t, 0)
+        else:
+            for s in segments:
+                task_manager.schedule_task(t, s)
+    
+    task_manager.print_status("Queueing tasks                             ", processes)
     task_manager.queue_scheduled_tasks()
-    task_manager.print_status(processes)
+    task_manager.print_status(None, processes)
     if task_manager.is_queue_empty():
         task_manager.print_report()
         return
@@ -42,7 +51,7 @@ def build_main(task_types: set[TaskType], input_segments: list[str], build_confi
     os.makedirs("build/logs", exist_ok=True)
     os.makedirs("build/hash", exist_ok=True)
 
-    task_manager.print_status(processes)
+    task_manager.print_status(None, processes)
     # Manage subprocesses
     while True:
         # try to start a process in all empty slots
@@ -76,11 +85,11 @@ def build_main(task_types: set[TaskType], input_segments: list[str], build_confi
 
                 else:
                     did_print_this_loop=True
-                    task_manager.print_status(processes)
+                    task_manager.print_status(None, processes)
         if active_count == 0 and task_manager.is_queue_empty():
             break
         if not did_print_this_loop:
-            task_manager.print_status(processes)
+            task_manager.print_status(None, processes)
 
     # Report
     task_manager.print_report()

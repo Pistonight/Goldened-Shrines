@@ -1,6 +1,6 @@
 
 from proc import ProcessHolder
-from taskdefs import ITaskDefinition, TaskType, TaskDefDownload, TaskDefTime, TaskDefGenerateSplits, TaskDefEncodeOverlay
+from taskdefs import ITaskDefinition, TaskType, TaskDefDownload, TaskDefTime, TaskDefGenerateSplits, TaskDefEncodeOverlay, TaskDefGenerateTimeTable
 
 class Task:
     def __init__(self, task_def: ITaskDefinition):
@@ -174,11 +174,11 @@ class TaskManager:
     def is_queue_empty(self):
         return not self.task_queue
     
-    def print_status(self, process_holders: list[ProcessHolder]):
+    def print_status(self, step_description, process_holders: list[ProcessHolder]):
         print(f"\033[{self.last_up_line}A")
         line = 2
-        if self.total == 0:
-            progress = "Calculating tasks"
+        if self.total == 0 or step_description is not None:
+            progress = step_description
         else:
             progress = f"{self.completed}/{self.total} Completed ({self.skipped} Cache Hit). {self.failed} Failed.   "
         
@@ -261,3 +261,5 @@ class TaskManager:
             return Task(TaskDefGenerateSplits(segment, segment_name, 14))
         if type == TaskType.EncodeOverlay:
             return Task(TaskDefEncodeOverlay(segment, segment_name))
+        if type == TaskType.GenerateTimeTable:
+            return Task(TaskDefGenerateTimeTable(self.segment_names))

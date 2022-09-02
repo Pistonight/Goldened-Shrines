@@ -64,8 +64,13 @@ def generate_table():
             link = seg_info["link"]
             if link.find("youtu") != -1:
                 vendor = "YouTube"
+            elif link.find("googleapi") != -1:
+                vendor = "Google Cloud"
             else:
                 vendor = "Video"
             out_file.write(f"<td><a href=\"{link}\">{vendor}</a></td>\n")
             out_file.write("</tr>\n")
         out_file.write(TABLE_AFTER)
+
+if __name__ == "__main__":
+    generate_table()

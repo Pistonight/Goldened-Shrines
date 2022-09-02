@@ -250,6 +250,39 @@ class TaskDefEncodeOverlay:
             f"build/logs/{self.segment_name}.encode"
         )
 
+class TaskDefGenerateTimeTable(ITaskDefinition):
+    def __init__(self, segment_names) -> None:
+        super().__init__()
+        self.total_segments = len(segment_names)
+        self.segment_names = segment_names
+
+    def get_description(self):
+        return f"Generate Time Table                                                     "
+    def get_dependencies(self):
+        deps = []
+        for s in range(self.total_segments):
+            deps.append((TaskType.GenerateTime, s))
+        return deps
+    def update_hash(self, do_update):
+        dep_files = []
+        for segment_name in self.segment_names:
+            dep_files.append(info.get_seg_time_toml(segment_name))
+        dep_files.append("docs/latest.html")
+        return hash.test_files(
+            f"build/hash/timetable.hash.txt",
+            dep_files,
+            do_update
+        )
+    def prepare(self):
+        pass
+    def execute(self):
+        return start_subprocess(
+            [
+                "python3", "scripts/timetable.py"
+            ],
+            f"build/logs/timetable"
+        )
+
 class TaskDefGenerateMergeVideo:
     def __init__(self, total_segments):
         self.total_Segments = total_segments
