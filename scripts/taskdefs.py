@@ -263,8 +263,9 @@ class TaskDefGenerateSplits(ITaskDefinition):
             f"build/logs/{self.segment_name}.splits{self.seed}"
         )
 
-class TaskDefEncodeOverlay:
+class TaskDefEncodeOverlay(ITaskDefinition):
     def __init__(self, segment, segment_name):
+        super().__init__()
         self.segment = segment
         self.segment_name = segment_name
     def is_gpu(self):
@@ -404,6 +405,72 @@ class TaskDefGenerateOutro(ITaskDefinition):
                 self.last_segment_name
             ],
             f"build/logs/_outro.split"
+        )
+
+class TaskDefEncodeIntro(ITaskDefinition):
+    def __init__(self):
+        super().__init__()
+    def is_gpu(self):
+        return True
+    def get_description(self):
+        return f"\033[1;34mEncode Intro                                                      \033[0m"
+    def get_dependencies(self):
+        return [(TaskType.GenerateIntro, 0)]
+
+    def update_hash(self, do_update):
+        return hash.test_files(
+             f"build/hash/_intro.encode.hash.txt",
+            [
+                info.format_seg_split_frame("_intro", 0),
+                info.get_seg_source_mp4("_intro"),
+                info.get_seg_overlay_mp4("_intro")
+            ],
+            do_update
+        )
+    def prepare(self):
+        os.makedirs("build/encode", exist_ok=True)
+
+    def execute(self):
+        return start_subprocess(
+            encoding_overlay_args(
+                info.get_seg_source_mp4("_intro"),
+                info.get_seg_split_overlay_series("_intro"),
+                info.get_seg_overlay_mp4("_intro")
+            ),
+            "build/logs/_intro.encode"
+        )
+
+class TaskDefEncodeOutro(ITaskDefinition):
+    def __init__(self):
+        super().__init__()
+    def is_gpu(self):
+        return True
+    def get_description(self):
+        return f"\033[1;34mEncode Outro                                                     \033[0m"
+    def get_dependencies(self):
+        return [(TaskType.GenerateOutro, 0)]
+
+    def update_hash(self, do_update):
+        return hash.test_files(
+             f"build/hash/_outro.encode.hash.txt",
+            [
+                "build/splits/_outro.png",
+                info.get_seg_source_mp4("_outro"),
+                info.get_seg_overlay_mp4("_outro")
+            ],
+            do_update
+        )
+    def prepare(self):
+        os.makedirs("build/encode", exist_ok=True)
+
+    def execute(self):
+        return start_subprocess(
+            encoding_overlay_args(
+                info.get_seg_source_mp4("_outro"),
+                "build/splits/_outro.png",
+                info.get_seg_overlay_mp4("_outro")
+            ),
+            "build/logs/_outro.encode"
         )
 
 class TaskDefGenerateMergeVideo:

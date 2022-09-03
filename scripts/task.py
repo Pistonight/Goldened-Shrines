@@ -10,7 +10,9 @@ from taskdefs import \
     TaskDefGenerateTimeTable, \
     TaskDefDownloadExtra, \
     TaskDefGenerateIntro, \
-    TaskDefGenerateOutro
+    TaskDefGenerateOutro, \
+    TaskDefEncodeIntro, \
+    TaskDefEncodeOutro
 
 class Task:
     def __init__(self, task_def: ITaskDefinition):
@@ -295,3 +297,7 @@ class TaskManager:
             return Task(TaskDefGenerateIntro(self.segment_names[0]))
         if type == TaskType.GenerateOutro:
             return Task(TaskDefGenerateOutro(self.segment_names[-1], len(self.segment_names)))
+        if type == TaskType.EncodeIntro:
+            return Task(TaskDefEncodeIntro())
+        if type == TaskType.EncodeOutro:
+            return Task(TaskDefEncodeOutro())
