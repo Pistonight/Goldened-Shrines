@@ -8,7 +8,9 @@ from taskdefs import \
     TaskDefGenerateSplits, \
     TaskDefEncodeOverlay, \
     TaskDefGenerateTimeTable, \
-    TaskDefDownloadExtra
+    TaskDefDownloadExtra, \
+    TaskDefGenerateIntro, \
+    TaskDefGenerateOutro
 
 class Task:
     def __init__(self, task_def: ITaskDefinition):
@@ -289,3 +291,7 @@ class TaskManager:
             return Task(TaskDefDownloadExtra("outro"))
         if type == TaskType.DownloadCredits:
             return Task(TaskDefDownloadExtra("credits"))
+        if type == TaskType.GenerateIntro:
+            return Task(TaskDefGenerateIntro(self.segment_names[0]))
+        if type == TaskType.GenerateOutro:
+            return Task(TaskDefGenerateOutro(self.segment_names[-1], len(self.segment_names)))

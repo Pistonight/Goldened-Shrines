@@ -71,10 +71,10 @@ class TaskType(Enum):
     DownloadOutro = 0x23
     DownloadCredits = 0x24
 
-    # Generate intro and outro splits
+    # Time intro and generate intro splits
     # Dependency: GenerateTime for first segment, Download intro
     GenerateIntro = 0x30
-    # Generate intro and outro splits
+    # Generate outro splits
     # Dependency: GenerateTime for last segment, Download outro
     GenerateOutro = 0x31
 
@@ -343,35 +343,67 @@ class TaskDefGenerateTimeTable(ITaskDefinition):
             f"build/logs/timetable"
         )
 
-class TaskDefGenerateIntroOutro(ITaskDefinition):
-    def __init__(self, first_seg_name, last_seg_name, total_segments) -> None:
+class TaskDefGenerateIntro(ITaskDefinition):
+    def __init__(self, first_seg_name) -> None:
         super().__init__()
-        self.total_segments = total_segments
         self.first_segment_name = first_seg_name
-        self.last_segment_name = last_seg_name
 
     def get_description(self):
-        return f"Generate Intro and Outro                                                     "
+        return f"\033[1;32mGenerate Intro Split\033[0m                                                    "
     def get_dependencies(self):
-        return [(TaskType.GenerateTime, self.total_segments-1)]
+        return [(TaskType.GenerateTime, 0)]
     def update_hash(self, do_update):
         dep_files = []
         dep_files.append(info.get_seg_time_toml(self.first_segment_name))
-        dep_files.append(info.get_seg_time_toml(self.last_segment_name))         
-        dep_files.append("docs/latest.html")
+        dep_files.append("build/splits/_intro/00000.png")
+        dep_files.append("build/download/_intro.mp4")
         return hash.test_files(
-            f"build/hash/timetable.hash.txt",
+            f"build/hash/_intro.split.hash.txt",
             dep_files,
             do_update
         )
     def prepare(self):
-        pass
+        os.makedirs("build/splits/_intro", exist_ok=True)
     def execute(self):
         return start_subprocess(
             [
-                "python3", "scripts/timetable.py"
+                "python3", "scripts/overlay_inout.py",
+                "intro",
+                self.first_segment_name
             ],
-            f"build/logs/timetable"
+            f"build/logs/_intro.split"
+        )
+
+class TaskDefGenerateOutro(ITaskDefinition):
+    def __init__(self, last_seg_name, total_segments) -> None:
+        super().__init__()
+        self.total_segments = total_segments
+        self.last_segment_name = last_seg_name
+
+    def get_description(self):
+        return f"\033[1;32mGenerate Outro Split\033[0m                                                    "
+    def get_dependencies(self):
+        return [(TaskType.GenerateTime, self.total_segments-1)]
+    def update_hash(self, do_update):
+        dep_files = []
+        dep_files.append(info.get_seg_time_toml(self.last_segment_name))
+        dep_files.append("build/splits/_outro.png")
+        dep_files.append("build/download/_outro.mp4")
+        return hash.test_files(
+            f"build/hash/_outro.split.hash.txt",
+            dep_files,
+            do_update
+        )
+    def prepare(self):
+        os.makedirs("build/splits", exist_ok=True)
+    def execute(self):
+        return start_subprocess(
+            [
+                "python3", "scripts/overlay_inout.py",
+                "outro",
+                self.last_segment_name
+            ],
+            f"build/logs/_outro.split"
         )
 
 class TaskDefGenerateMergeVideo:

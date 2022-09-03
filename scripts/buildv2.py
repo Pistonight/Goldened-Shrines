@@ -129,9 +129,23 @@ def add_tasks_from_name(task_name, tasks: set[TaskType]):
         tasks.add(TaskType.GenerateSplit_c)
         tasks.add(TaskType.GenerateSplit_d)
         tasks.add(TaskType.GenerateSplit_e)
+        tasks.add(TaskType.GenerateIntro),
+        tasks.add(TaskType.GenerateOutro)
         return True
     if task_name in ("overlay", "encode"):
         tasks.add(TaskType.EncodeOverlay)
+        tasks.add(TaskType.EncodeIntro)
+        tasks.add(TaskType.EncodeOutro)
+        return True
+    if task_name == "intro":
+        tasks.add(TaskType.DownloadIntro)
+        tasks.add(TaskType.GenerateIntro)
+        tasks.add(TaskType.EncodeIntro)
+        return True
+    if task_name == "outro":
+        tasks.add(TaskType.DownloadOutro)
+        tasks.add(TaskType.GenerateOutro)
+        tasks.add(TaskType.EncodeOutro)
         return True
     if task_name in ("table", "timetable"):
         tasks.add(TaskType.GenerateTimeTable)

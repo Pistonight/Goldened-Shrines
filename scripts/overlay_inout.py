@@ -1,8 +1,26 @@
 import overlay
 import info
 import sys
-def generate_intro(first_segment, intro_length):
+import subprocess
+def time_intro():
+    result = subprocess.run(
+        ["ffprobe.exe","-i",
+         info.get_seg_source_mp4("_intro"),
+         "-v", "error",
+         "-count_packets",
+         "-select_streams", "v:0",
+         "-show_entries", "stream=nb_read_packets",
+         "-of", "csv=p=0"],
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.DEVNULL)
+    if result.returncode != 0:
+        sys.exit(result.returncode)
+    return int(result.stdout)
+
+def generate_intro(first_segment):
     time_info = info.get_seg_time_info(first_segment, None)
+    intro_length = time_intro()
     time_info["shrine_number"] = 0
     start=-intro_length
     time_info["start_frame"] = start
@@ -22,10 +40,10 @@ def generate_outro(last_segment):
     fonts = overlay.load_fonts()
     base = overlay.get_base_image("_gg", time_info, fonts)
     frame_image = overlay.draw_frame(base, final_time+1, -1, fonts)
-    frame_image.save("build/splits/_outro/split.png")
+    frame_image.save("build/splits/_outro.png")
 
 if __name__ == "__main__":
     if sys.argv[1] == "intro":
-        generate_intro(sys.argv[2], int(sys.argv[3]))
+        generate_intro(sys.argv[2])
     elif sys.argv[1] == "outro":
         generate_outro(sys.argv[2])
