@@ -34,7 +34,15 @@ def build_main(task_types: set[TaskType], input_segments: list[str], build_confi
         if t in (
             TaskType.GenerateMergeVideo, 
             TaskType.GenerateWebPage, 
-            TaskType.GenerateTimeTable
+            TaskType.GenerateTimeTable,
+            TaskType.DownloadTrailer,
+            TaskType.DownloadIntro,
+            TaskType.DownloadOutro,
+            TaskType.DownloadCredits,
+            TaskType.GenerateIntro,
+            TaskType.GenerateOutro,
+            TaskType.EncodeIntro,
+            TaskType.EncodeOutro
         ):
             task_manager.schedule_task(t, 0)
         else:
@@ -97,6 +105,10 @@ def build_main(task_types: set[TaskType], input_segments: list[str], build_confi
 def add_tasks_from_name(task_name, tasks: set[TaskType]):
     if task_name == "download":
         tasks.add(TaskType.Download)
+        tasks.add(TaskType.DownloadIntro)
+        tasks.add(TaskType.DownloadOutro)
+        tasks.add(TaskType.DownloadCredits)
+        tasks.add(TaskType.DownloadTrailer)
         return True
     if task_name == "time":
         tasks.add(TaskType.GenerateTime)

@@ -3,6 +3,28 @@ from subproc import start_subprocess
 import os
 import info
 import hash
+
+def encoding_overlay_args(input_mp4, input_png, output_mp4):
+    return [
+                "ffmpeg.exe",
+                "-y",
+                "-hwaccel",               "nvdec",
+                "-hwaccel_output_format", "cuda",
+                "-i",                     input_mp4,
+                "-framerate",             "30",
+                "-thread_queue_size",     "4096",
+                "-i",                     input_png,
+                "-filter_complex", 
+                "scale_cuda=1920:1080,hwdownload,format=nv12 [base]; [base][1:v]overlay=10:728 [out]",
+                "-map",                   "[out]", 
+                "-map",                   "0:a",
+                "-c:v",                   "h264_nvenc",
+                "-c:a",                   "copy",
+                "-b:v",                   "6M",
+                "-fps_mode",              "passthrough",
+                output_mp4
+            ]
+
 class TaskType(Enum):  
     # Download the segment
     # Input: segments/<Segment>.toml
@@ -42,19 +64,39 @@ class TaskType(Enum):
     # Output: build/overlayed/<Segment>.mp4
     EncodeOverlay = 0x05
 
-    # Synchronous
+    # Download trailer, intro, credits, and outro
+    # Dependency: None
+    DownloadTrailer = 0x21
+    DownloadIntro = 0x22
+    DownloadOutro = 0x23
+    DownloadCredits = 0x24
+
+    # Generate intro and outro splits
+    # Dependency: GenerateTime for first segment, Download intro
+    GenerateIntro = 0x30
+    # Generate intro and outro splits
+    # Dependency: GenerateTime for last segment, Download outro
+    GenerateOutro = 0x31
+
+    # Encode intro
+    # Dependency: GenerateIntroOutro
+    EncodeIntro = 0x07
+
+    # Encode outro
+    # Dependency: GenerateIntroOutro
+    EncodeOutro = 0x08
+
     # Generate time table html
     # Dependency: GenerateTime for last segment
-    GenerateTimeTable = 0x07
+    GenerateTimeTable = 0x09
 
-    # Synchronous
     # Generate the relase web page
     # Dependency: GenerateTimeTable
-    GenerateWebPage = 0x08
+    GenerateWebPage = 0x0A
 
     # Merge the segments
     # Dependency: EncodeOverlay for all segments
-    GenerateMergeVideo = 0x09
+    GenerateMergeVideo = 0x0B
 
 class ITaskDefinition:
     def get_dependencies(self):
@@ -109,6 +151,41 @@ class TaskDefDownload(ITaskDefinition):
                 "-o", self.output_mp4()
             ],
             f"build/logs/{self.segment_name}.download"
+        )
+
+class TaskDefDownloadExtra(ITaskDefinition):
+    def __init__(self, extra_name) -> None:
+        super().__init__()
+        self.extra_name = extra_name
+    def output_mp4(self):
+        return f"build/download/_{self.extra_name}.mp4"
+    def get_description(self):
+        return f"\033[1;31mDownload {self.output_mp4()}                               \033[0m"
+    def get_dependencies(self):
+        return []
+    def update_hash(self, do_update):
+        return hash.test_files(
+            f"build/hash/_{self.extra_name}.download.hash.txt",
+            [
+                "video.toml",
+                self.output_mp4()
+            ],
+            do_update
+        )
+    def prepare(self):
+        os.makedirs("build/download", exist_ok=True)
+        output_name = self.output_mp4()
+        if os.path.exists(output_name):
+            os.remove(output_name)
+    def execute(self):
+        link = info.get_extra_video_link(self.extra_name)
+        return start_subprocess(
+            [
+                "yt-dlp",
+                link,
+                "-o", self.output_mp4()
+            ],
+            f"build/logs/_{self.extra_name}.download"
         )
 
 class TaskDefTime(ITaskDefinition):
@@ -228,25 +305,11 @@ class TaskDefEncodeOverlay:
 
     def execute(self):
         return start_subprocess(
-            [
-                "ffmpeg.exe",
-                "-y",
-                "-hwaccel",               "nvdec",
-                "-hwaccel_output_format", "cuda",
-                "-i",                     info.get_seg_source_mp4(self.segment_name),
-                "-framerate",             "30",
-                "-thread_queue_size",     "4096",
-                "-i",                     info.get_seg_split_overlay_series(self.segment_name),
-                "-filter_complex", 
-                "scale_cuda=1920:1080,hwdownload,format=nv12 [base]; [base][1:v]overlay=10:728 [out]",
-                "-map",                   "[out]", 
-                "-map",                   "0:a",
-                "-c:v",                   "h264_nvenc",
-                "-c:a",                   "copy",
-                "-b:v",                   "6M",
-                "-fps_mode",              "passthrough",
+            encoding_overlay_args(
+                info.get_seg_source_mp4(self.segment_name),
+                info.get_seg_split_overlay_series(self.segment_name),
                 info.get_seg_overlay_mp4(self.segment_name)
-            ],
+            ),
             f"build/logs/{self.segment_name}.encode"
         )
 
@@ -259,14 +322,42 @@ class TaskDefGenerateTimeTable(ITaskDefinition):
     def get_description(self):
         return f"Generate Time Table                                                     "
     def get_dependencies(self):
-        deps = []
-        for s in range(self.total_segments):
-            deps.append((TaskType.GenerateTime, s))
-        return deps
+        return [(TaskType.GenerateTime, self.total_segments-1)]
     def update_hash(self, do_update):
         dep_files = []
         for segment_name in self.segment_names:
             dep_files.append(info.get_seg_time_toml(segment_name))
+        dep_files.append("docs/latest.html")
+        return hash.test_files(
+            f"build/hash/timetable.hash.txt",
+            dep_files,
+            do_update
+        )
+    def prepare(self):
+        pass
+    def execute(self):
+        return start_subprocess(
+            [
+                "python3", "scripts/timetable.py"
+            ],
+            f"build/logs/timetable"
+        )
+
+class TaskDefGenerateIntroOutro(ITaskDefinition):
+    def __init__(self, first_seg_name, last_seg_name, total_segments) -> None:
+        super().__init__()
+        self.total_segments = total_segments
+        self.first_segment_name = first_seg_name
+        self.last_segment_name = last_seg_name
+
+    def get_description(self):
+        return f"Generate Intro and Outro                                                     "
+    def get_dependencies(self):
+        return [(TaskType.GenerateTime, self.total_segments-1)]
+    def update_hash(self, do_update):
+        dep_files = []
+        dep_files.append(info.get_seg_time_toml(self.first_segment_name))
+        dep_files.append(info.get_seg_time_toml(self.last_segment_name))         
         dep_files.append("docs/latest.html")
         return hash.test_files(
             f"build/hash/timetable.hash.txt",

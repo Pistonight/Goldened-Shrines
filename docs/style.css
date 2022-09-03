@@ -3,9 +3,13 @@ body {
     margin: 0;
 }
 
+.time-table{
+    width:100%;
+}
+
 .main-div {
-    width: 64vw;
-    margin: 0 18vw;
+    max-width: 1280px;
+    margin: auto;
 }
 
 h2 {

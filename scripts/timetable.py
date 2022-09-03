@@ -6,6 +6,11 @@ TABLE_BEFORE="""
     }
     .time-table td {
         border: 1px solid grey;
+        padding: 5px;
+    }
+    .time-table img {
+        padding: 1px;
+        vertical-align: middle;
     }
 </style>
 <table class="time-table">
@@ -34,6 +39,7 @@ def generate_table():
     with open("docs/latest.html", "w+", encoding="utf-8") as out_file:
         out_file.write(TABLE_BEFORE)
         seg_names = info.load_seg_names()
+        runner_html_map = info.load_runner_html_map()
 
         for seg in seg_names:
             out_file.write("<tr>\n")
@@ -42,7 +48,7 @@ def generate_table():
             seg_time_info = info.get_seg_time_info(seg)
             # Image
             icon_name = seg_info["icon"]
-            out_file.write(f"<td><img width=\"24px\" height=\"auto\" src=\"./images/{icon_name}_Gold_.png\"/></td>\n")
+            out_file.write(f"<td><img width=\"32px\" height=\"auto\" src=\"./images/{icon_name}_Gold_.png\"/></td>\n")
             # Shrine Number
             shrine_number = info.get_3char_seg_num(seg_time_info["shrine_number"])
             out_file.write(f"<td>{shrine_number}</td>\n")
@@ -59,7 +65,8 @@ def generate_table():
             out_file.write(f"<td>{split_time}</td>\n")
             # Runner
             runner = seg_info["runner"]
-            out_file.write(f"<td>{runner}</td>\n")
+            runner_html = runner_html_map[runner]
+            out_file.write(f"<td>{runner_html}</td>\n")
             # Link
             link = seg_info["link"]
             if link.find("youtu") != -1:

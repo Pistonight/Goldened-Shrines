@@ -25,6 +25,9 @@ def sec_to_strh(secs):
     return f"{hour_string}{minute_string}:{second_string}"
 
 def frm_to_strh(frames, show_ms=True):
+    negative = frames < 0
+    if negative:
+        frames = -frames
     millisecond_frames = frames % FRAME_PER_SECOND
     seconds = (frames - millisecond_frames) / FRAME_PER_SECOND
 
@@ -44,7 +47,9 @@ def frm_to_strh(frames, show_ms=True):
 
     ms_string = f".{int(hundred_millisecond)}{rest_string}"
 
-    return f"{hms_string}{ms_string}"
+    minus = "\u2013" if negative else ""
+
+    return f"{minus}{hms_string}{ms_string}"
 
 if __name__ == "__main__":
     frames = int(sys.argv[1])

@@ -65,3 +65,27 @@ def load_seg_names():
             
     return seg_names
 
+def load_runner_html_map():
+    runners = {}
+    with open("runners.toml", "r", encoding="utf-8") as runner_file:
+        runner_toml = toml.load(runner_file)
+        for runner_name, runner in runner_toml.items():
+            html = "<span>"
+            display_name = runner["display_name"]
+            if "src" in runner:
+                link_src = runner["src"]
+                html+=f"<a href=\"{link_src}\">{display_name}</a>"
+            else:
+                html+=display_name
+            for social in ("twitch", "twitter", "youtube", "bilibili"):
+                if social in runner:
+                    link_social = runner[social]
+                    html+=f" <a href=\"{link_social}\"><img width=\"16px\" height=\"16px\" src=\"https://www.speedrun.com/images/socialmedia/{social}.png\"/></a>"
+            html+="</span>"
+            runners[runner_name] = html
+    return runners
+
+def get_extra_video_link(name):
+     with open("video.toml", "r", encoding="utf-8") as video_file:
+        video_toml = toml.load(video_file)
+        return video_toml[name]

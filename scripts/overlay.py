@@ -72,6 +72,9 @@ def get_base_image(seg_name, seg_time_info, fonts):
 
     is_current = False
     is_after = False
+    if seg_time_info["start_frame"] < 0:
+        # special segment
+        is_after = True
     for i, split in enumerate(splits):
         name, seg_time, split_time, icon = split
         if split_time=="-":
@@ -117,12 +120,20 @@ def draw_frame(base_image, start_frame, frame, fonts):
     timer_font_small = fonts["timer_small"]
     number_font = fonts["number"]
 
-    x=538-draw.textlength(time_no_ms, font=timer_font_big)
-    draw.text((x,276), time_no_ms, fill=COLOR_WHITE,font=timer_font_big)
-    draw.text((540,286), time_ms, fill=COLOR_WHITE,font=timer_font_small)
+    if start_frame >= 0:
+        if frame >= 0:
+            color = COLOR_WHITE 
+        else:
+            color = COLOR_GOLD
+    else:
+        color = COLOR_GREY
 
-    x=SEG_TIMER_X-draw.textlength(seg_time, font=number_font)
-    draw.text((x,172), seg_time, fill=COLOR_GOLD, font=number_font)
+    x=538-draw.textlength(time_no_ms, font=timer_font_big)
+    draw.text((x,276), time_no_ms, fill=color,font=timer_font_big)
+    draw.text((540,286), time_ms, fill=color,font=timer_font_small)
+    if start_frame >=0 and frame >=0:
+        x=SEG_TIMER_X-draw.textlength(seg_time, font=number_font)
+        draw.text((x,172), seg_time, fill=COLOR_GOLD, font=number_font)
     return image
 
 def generate_overlay(segment, seed, step):

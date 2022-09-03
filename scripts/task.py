@@ -1,6 +1,14 @@
 
 from proc import ProcessHolder
-from taskdefs import ITaskDefinition, TaskType, TaskDefDownload, TaskDefTime, TaskDefGenerateSplits, TaskDefEncodeOverlay, TaskDefGenerateTimeTable
+from taskdefs import \
+    ITaskDefinition, \
+    TaskType, \
+    TaskDefDownload, \
+    TaskDefTime, \
+    TaskDefGenerateSplits, \
+    TaskDefEncodeOverlay, \
+    TaskDefGenerateTimeTable, \
+    TaskDefDownloadExtra
 
 class Task:
     def __init__(self, task_def: ITaskDefinition):
@@ -85,16 +93,26 @@ class TaskManager:
 
     def queue_scheduled_tasks(self):
         """Queue up scheduled tasks in an optimized order"""
+        # Tasks are popped from the back, so we insert last tasks first
         for task_type in (
             TaskType.GenerateMergeVideo, 
             TaskType.GenerateWebPage, 
-            TaskType.GenerateTimeTable
+            TaskType.GenerateTimeTable,
+            TaskType.DownloadCredits,
+            TaskType.DownloadTrailer,
+            TaskType.EncodeOutro,
+            TaskType.GenerateOutro,
+            TaskType.DownloadOutro,
+            TaskType.EncodeIntro,
+            TaskType.GenerateIntro,
+            TaskType.DownloadIntro,
         ):
             for task in self.task_matrix[task_type]:
                 if task is not None:
                     self.add_to_queue(task)
                     break
-
+        
+        # For segment specific tasks, we want to hit EncodeOverlay as fast as possible
         for segment in range(len(self.segment_names)-1, -1, -1):
             for task_type in (
                 TaskType.EncodeOverlay,
@@ -263,3 +281,11 @@ class TaskManager:
             return Task(TaskDefEncodeOverlay(segment, segment_name))
         if type == TaskType.GenerateTimeTable:
             return Task(TaskDefGenerateTimeTable(self.segment_names))
+        if type == TaskType.DownloadTrailer:
+            return Task(TaskDefDownloadExtra("trailer"))
+        if type == TaskType.DownloadIntro:
+            return Task(TaskDefDownloadExtra("intro"))
+        if type == TaskType.DownloadOutro:
+            return Task(TaskDefDownloadExtra("outro"))
+        if type == TaskType.DownloadCredits:
+            return Task(TaskDefDownloadExtra("credits"))
