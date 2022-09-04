@@ -5,6 +5,25 @@ import info
 import hash
 
 def encoding_overlay_args(input_mp4, input_png, output_mp4):
+    if input_png is None:
+        # re-encode
+        return [
+                "ffmpeg",
+                "-y",
+                "-hwaccel", "nvdec",
+                "-hwaccel_output_format", "cuda",
+                "-i", input_mp4,
+                "-framerate", "30",
+                "-filter_complex",
+                "scale_cuda=1920:1080,hwdownload,format=nv12 [base]",
+                "-map", "[base]",
+                "-map", "0:a",
+                "-c:v", "h264_nvenc",
+                "-b:v", "6M",
+                "-c:a", "copy",
+                "-fps_mode", "passthrough",
+                output_mp4
+        ]
     return [
                 "ffmpeg.exe",
                 "-y",
@@ -79,12 +98,20 @@ class TaskType(Enum):
     GenerateOutro = 0x31
 
     # Encode intro
-    # Dependency: GenerateIntroOutro
-    EncodeIntro = 0x07
+    # Dependency: GenerateIntro
+    EncodeIntro = 0x40
 
     # Encode outro
-    # Dependency: GenerateIntroOutro
-    EncodeOutro = 0x08
+    # Dependency: GenerateOutro
+    EncodeOutro = 0x41
+
+    # Encode trailer
+    # Dependency: DownloadTrailer
+    EncodeTrailer = 0x42
+
+    # Encode credits
+    # Dependency: DownloadCredits
+    EncodeCredits = 0x43
 
     # Generate time table html
     # Dependency: GenerateTime for last segment
@@ -95,7 +122,7 @@ class TaskType(Enum):
     GenerateWebPage = 0x0A
 
     # Merge the segments
-    # Dependency: EncodeOverlay for all segments
+    # Dependency: EncodeOverlay for all segments and extra videos
     GenerateMergeVideo = 0x0B
 
 class ITaskDefinition:
@@ -473,13 +500,80 @@ class TaskDefEncodeOutro(ITaskDefinition):
             "build/logs/_outro.encode"
         )
 
-class TaskDefGenerateMergeVideo:
-    def __init__(self, total_segments):
-        self.total_Segments = total_segments
+class TaskDefGenerateWebPage(ITaskDefinition):
+    def __init__(self, last_seg_name) -> None:
+        super().__init__()
+        self.last_segment_name = last_seg_name
+
     def get_description(self):
-        return "Merge final video                                                                 "
+        return f"Writing index.html                                                    "
     def get_dependencies(self):
-        deps = []
+        return [(TaskType.GenerateTimeTable, 0)]
+    def update_hash(self, do_update):
+        dep_files = ["docs/latest.html", "docs/index.html"]
+        return hash.test_files(
+            f"build/hash/webpage.hash.txt",
+            dep_files,
+            do_update
+        )
+    def prepare(self):
+        pass
+    def execute(self):
+        return start_subprocess(
+            [
+                "python3", "scripts/webpage.py", self.last_segment_name
+            ],
+            f"build/logs/webpage"
+        )
+
+class TaskDefEncodeExtra(ITaskDefinition):
+    def __init__(self, video, dependency):
+        super().__init__()
+        self.video = video
+        self.dependency = dependency
+    def is_gpu(self):
+        return True
+    def get_description(self):
+        return f"\033[1;34mEncode {self.video}                                                     \033[0m"
+    def get_dependencies(self):
+        return [(self.dependency, 0)]
+
+    def update_hash(self, do_update):
+        return hash.test_files(
+             f"build/hash/{self.video}.encode.hash.txt",
+            [
+                info.get_seg_source_mp4(self.video),
+                info.get_seg_overlay_mp4(self.video)
+            ],
+            do_update
+        )
+    def prepare(self):
+        os.makedirs("build/encode", exist_ok=True)
+
+    def execute(self):
+        return start_subprocess(
+            encoding_overlay_args(
+                info.get_seg_source_mp4(self.video),
+                None,
+                info.get_seg_overlay_mp4(self.video)
+            ),
+            f"build/logs/{self.video}.encode"
+        )
+
+class TaskDefGenerateMergeVideo(ITaskDefinition):
+    def __init__(self, total_segments):
+        super().__init__()
+        self.total_segments = total_segments
+    def get_description(self):
+        return "Making final merged video                                                                 "
+    def get_dependencies(self):
+        deps = [
+            (TaskType.EncodeTrailer,0), 
+            (TaskType.EncodeCredits,0), 
+            (TaskType.EncodeIntro,0),
+            (TaskType.EncodeOutro,0)
+        ]
+
         for s in range(self.total_segments):
             deps.append((TaskType.EncodeOverlay, s))
         return deps
@@ -488,16 +582,24 @@ class TaskDefGenerateMergeVideo:
             "build/hash/merge.hash.txt",
             [
                 "build/merge/filelist.txt",
-                "build/merge/merged.mp4"
+                "build/merge/merged.mp4",
+                "build/encode/_intro.mp4",
+                "build/encode/_outro.mp4",
+                "build/encode/_trailer.mp4",
+                "build/encode/_credits.mp4"
             ],
             do_update
         )
     def prepare(self):
         os.makedirs("build/merge", exist_ok=True)
         with open("build/merge/filelist.txt", "w+", encoding="utf-8") as out_file:
+            out_file.write("file ../encode/_trailer.mp4\n")
+            out_file.write("file ../encode/_intro.mp4\n")
             seg_names = info.load_seg_names()
             for seg_name in seg_names:
-                out_file.write(f"file {info.get_seg_overlay_mp4(seg_name)}\n")
+                out_file.write(f"file ../../{info.get_seg_overlay_mp4(seg_name)}\n")
+            out_file.write("file ../encode/_outro.mp4\n")
+            out_file.write("file ../encode/_credits.mp4\n")
 
     def execute(self):
         return start_subprocess(
@@ -505,8 +607,8 @@ class TaskDefGenerateMergeVideo:
                 "ffmpeg",
                 "-y",
                 "-f", "concat",
-                "-i", "build/merge/filelist.txt",
                 "-safe", "0",
+                "-i", "build/merge/filelist.txt",
                 "-c", "copy",
                 "build/merge/merged.mp4"
             ],

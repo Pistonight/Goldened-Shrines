@@ -42,7 +42,9 @@ def build_main(task_types: set[TaskType], input_segments: list[str], build_confi
             TaskType.GenerateIntro,
             TaskType.GenerateOutro,
             TaskType.EncodeIntro,
-            TaskType.EncodeOutro
+            TaskType.EncodeOutro,
+            TaskType.EncodeCredits,
+            TaskType.EncodeTrailer
         ):
             task_manager.schedule_task(t, 0)
         else:
@@ -136,6 +138,8 @@ def add_tasks_from_name(task_name, tasks: set[TaskType]):
         tasks.add(TaskType.EncodeOverlay)
         tasks.add(TaskType.EncodeIntro)
         tasks.add(TaskType.EncodeOutro)
+        tasks.add(TaskType.EncodeTrailer)
+        tasks.add(TaskType.EncodeCredits)
         return True
     if task_name == "intro":
         tasks.add(TaskType.DownloadIntro)

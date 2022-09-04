@@ -12,7 +12,10 @@ from taskdefs import \
     TaskDefGenerateIntro, \
     TaskDefGenerateOutro, \
     TaskDefEncodeIntro, \
-    TaskDefEncodeOutro
+    TaskDefEncodeOutro, \
+    TaskDefEncodeExtra, \
+    TaskDefGenerateWebPage, \
+    TaskDefGenerateMergeVideo
 
 class Task:
     def __init__(self, task_def: ITaskDefinition):
@@ -102,7 +105,9 @@ class TaskManager:
             TaskType.GenerateMergeVideo, 
             TaskType.GenerateWebPage, 
             TaskType.GenerateTimeTable,
+            TaskType.EncodeCredits,
             TaskType.DownloadCredits,
+            TaskType.EncodeTrailer,
             TaskType.DownloadTrailer,
             TaskType.EncodeOutro,
             TaskType.GenerateOutro,
@@ -301,3 +306,11 @@ class TaskManager:
             return Task(TaskDefEncodeIntro())
         if type == TaskType.EncodeOutro:
             return Task(TaskDefEncodeOutro())
+        if type == TaskType.GenerateWebPage:
+            return Task(TaskDefGenerateWebPage(self.segment_names[-1]))
+        if type == TaskType.EncodeTrailer:
+            return Task(TaskDefEncodeExtra("_trailer", TaskType.DownloadTrailer))
+        if type == TaskType.EncodeCredits:
+            return Task(TaskDefEncodeExtra("_credits", TaskType.DownloadCredits))
+        if type == TaskType.GenerateMergeVideo:
+            return Task(TaskDefGenerateMergeVideo(len(self.segment_names)))
