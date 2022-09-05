@@ -2,9 +2,10 @@ import toml
 import re
 import functools
 from buildutil import paths
-def get_seg_spaced_name(segment):
+def get_seg_spaced_name(segment:str):
+    segment_name = segment.split(".", 1)[0]
     #https://www.geeksforgeeks.org/python-split-camelcase-string-to-individual-strings/
-    return " ".join(re.findall(r'[A-Z](?:[a-z]+|[A-Z]*(?=[A-Z]|$))', segment))
+    return " ".join(re.findall(r'[A-Z](?:[a-z]+|[A-Z]*(?=[A-Z]|$))', segment_name))
 
 def get_3char_seg_num(num):
     num = int(num)

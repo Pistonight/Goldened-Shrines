@@ -184,6 +184,7 @@ if __name__ == "__main__":
             segments.append(arg)
     
     if clean:
+        print("Removing build directory")
         clean_output()
     
     config = BuildConfig(subprocesses=15)

@@ -1,4 +1,4 @@
-from buildutil import info, timecode
+from buildutil import info, timecode, paths
 import sys
 GENERATOR_METATITLE = "<!-- GENERATOR METATITLE -->"
 GENERATOR_TITLE = "<!-- GENERATOR TITLE -->"
@@ -12,10 +12,10 @@ def generate_index_html(last_segment):
 
     title = f"All Shrines in {final_time_string} by The BOTW Community"
 
-    with open("docs/index.html", "r", encoding="utf-8") as file:
+    with open(paths.index_html(), "r", encoding="utf-8") as file:
         for line in file:
             lines.append(line)
-    with open("docs/index.html", "w", encoding="utf-8") as file:
+    with open(paths.index_html(), "w", encoding="utf-8") as file:
         skip_until = None
         for line in lines:
             if skip_until is not None:
@@ -36,7 +36,7 @@ def generate_index_html(last_segment):
 
             if line.startswith(GENERATOR_TABLE):
                 skip_until = GENERATOR_TABLE
-                with open("docs/latest.html", "r", encoding="utf-8") as table:
+                with open(paths.timetable_html(), "r", encoding="utf-8") as table:
                     for line in table:
                         file.write(line)
 

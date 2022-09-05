@@ -1,4 +1,4 @@
 link = "https://storage.googleapis.com/goldened-shrines-segments/025-Tah-Muhl.mp4"
 runner = "piston"
 icon = "Shrine"
-profile = "piston"
+profile = "shrine_clean"

@@ -10,11 +10,12 @@ audio_normalize_target = "-25"
 [outro]
 audio_normalize_target = "-25"
 
-[piston]
+[shrine_clean]
 audio_normalize_target = "-35"
 
 [boss]
 audio_normalize_target = "-25"
 
+# Runner specific (for different mic audio)
 [pfive_mic]
 audio_normalize_target = "-21"

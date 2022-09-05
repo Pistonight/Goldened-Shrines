@@ -31,10 +31,10 @@ TABLE_AFTER="""
     </tbody>
 </table>
 """
-from buildutil import info, timecode
+from buildutil import info, timecode, paths
 
 def generate_table():
-    with open("docs/latest.html", "w+", encoding="utf-8") as out_file:
+    with open(paths.timetable_html(), "w+", encoding="utf-8") as out_file:
         out_file.write(TABLE_BEFORE)
         seg_names = info.get_seg_names()
         runner_html_map = info.load_runner_html_map()
