@@ -102,6 +102,10 @@ def encode_args(input_mp4, input_png, output_mp4, segment_name):
         out_v_stream = "[fade]"
         out_a_stream = "[aout]"
 
+    if segment_name == "_credits":
+        filter_complex+=f"; {out_v_stream}fade=t=in:d=1.5:st=0:c=white [fade]"
+        out_v_stream = "[fade]"
+
     # Overlay
     if input_png is not None:
         args.extend([

@@ -1,5 +1,20 @@
+[intro_music]
+audio_normalize_target = "-25"
+
+[intro]
+audio_normalize_target = "-40"
+
+[outro_music]
+audio_normalize_target = "-25"
+
+[outro]
+audio_normalize_target = "-25"
+
 [piston]
 audio_normalize_target = "-35"
+
+[boss]
+audio_normalize_target = "-25"
 
 [pfive_mic]
 audio_normalize_target = "-21"

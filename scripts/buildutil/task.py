@@ -75,7 +75,11 @@ class TaskType(Enum):
 
     # Normalize encoded video
     Normalize = 0x70
-    NormalizeExtra = 0x71
+    NormalizeTrailer = 0x71
+    NormalizeIntro = 0x72
+    NormalizeTransition = 0x73
+    NormalizeOutro = 0x74
+    NormalizeCredits = 0x75
     # Test segment and the
     TestMerge = 0x80
 

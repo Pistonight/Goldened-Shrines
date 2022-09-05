@@ -8,6 +8,7 @@ from buildutil.task_timetable import TaskDefGenerateTimeTable
 from buildutil.task_web import TaskDefGenerateWebPage
 from buildutil.task_normalize import TaskDefNormalize
 from buildutil.task_testmerge import TaskDefTestMerge
+from buildutil.task_merge import TaskDefMerge
 
 class TaskFactory:
     def __init__(self, segment_names):
@@ -75,8 +76,16 @@ class TaskFactory:
             return Task(TaskDefGenerateWebPage(self.segment_names[-1]))
         if type == TaskType.Normalize:
             return Task(TaskDefNormalize(segment, segment_name))
-        if type == TaskType.NormalizeExtra:
+        if type == TaskType.NormalizeTrailer:
+            return Task(TaskDefNormalize(None, "_trailer"))
+        if type == TaskType.NormalizeIntro:
+            return Task(TaskDefNormalize(None, "_intro"))
+        if type == TaskType.NormalizeTransition:
             return Task(TaskDefNormalize(None, "_outro_transition"))
+        if type == TaskType.NormalizeOutro:
+            return Task(TaskDefNormalize(None, "_outro"))
+        if type == TaskType.NormalizeCredits:
+            return Task(TaskDefNormalize(None, "_credits"))
         if type == TaskType.TestMerge:
             return Task(TaskDefTestMerge(
                 segment, 
@@ -84,5 +93,5 @@ class TaskFactory:
                 len(self.segment_names),
                 self.segment_names[segment-1] if segment > 0 else None,
                 self.segment_names[segment+1] if segment < len(self.segment_names)-1 else None))
-        # if type == TaskType.GenerateMergeVideo:
-        #     return Task(TaskDefGenerateMergeVideo(len(self.segment_names)))
+        if type == TaskType.MergeVideo:
+            return Task(TaskDefMerge(self.segment_names))

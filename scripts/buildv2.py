@@ -45,8 +45,11 @@ def build_main(task_types: set[TaskType], input_segments: list[str], build_confi
             TaskType.EncodeTransition,
             TaskType.GenerateWebPage, 
             TaskType.GenerateTimeTable,
-            TaskType.NormalizeExtra,
-
+            TaskType.NormalizeTrailer,
+            TaskType.NormalizeIntro,
+            TaskType.NormalizeTransition,
+            TaskType.NormalizeOutro,
+            TaskType.NormalizeCredits,
             TaskType.MergeVideo, 
             
         ):
@@ -151,7 +154,11 @@ def add_tasks_from_name(task_name, tasks: set[TaskType]):
         return True
     if task_name in ("normalize", "audio"):
         tasks.add(TaskType.Normalize)
-        tasks.add(TaskType.NormalizeExtra)
+        tasks.add(TaskType.NormalizeTrailer)
+        tasks.add(TaskType.NormalizeIntro)
+        tasks.add(TaskType.NormalizeTransition)
+        tasks.add(TaskType.NormalizeOutro)
+        tasks.add(TaskType.NormalizeCredits)
         return True
     if task_name == "test":
         tasks.add(TaskType.TestMerge)

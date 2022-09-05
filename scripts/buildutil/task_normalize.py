@@ -18,7 +18,11 @@ class TaskDefNormalize(ITaskDefinition):
     def get_dependencies(self):
         if self.segment_name.startswith("_"):
             return [
-                (TaskType.EncodeTransition, 0)
+                (TaskType.EncodeTransition, 0),
+                (TaskType.EncodeTrailer, 0),
+                (TaskType.EncodeIntro, 0),
+                (TaskType.EncodeOutro, 0),
+                (TaskType.EncodeCredits, 0)
             ]
         return [
             (TaskType.EncodeOverlay, self.segment)
