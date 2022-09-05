@@ -1,5 +1,6 @@
 import time
-from tc import sec_to_strh
+from buildutil.task import Task
+from buildutil.timecode import sec_to_strh
 
 class ProcessHolder:
     def __init__(self):
@@ -12,7 +13,7 @@ class ProcessHolder:
         return sec_to_strh(round(time.time()-self.start_time))
     def get_process(self):
         return self.process
-    def get_task(self):
+    def get_task(self) -> Task:
         return self.task
     def start(self, process, task):
         self.process = process

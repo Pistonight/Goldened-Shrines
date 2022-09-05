@@ -1,4 +1,5 @@
-[iTNTPiston]
+# Top 5 on the leader board to start with, will add/remove
+[piston]
 display_name = "iTNTPiston"
 src = "https://www.speedrun.com/user/iTNTPiston"
 twitch = "https://twitch.tv/itntpiston"
@@ -6,3 +7,35 @@ youtube = "https://www.youtube.com/channel/UCjfDAsxdvo_cux_iMGk4-yw"
 twitter = "https://www.twitter.com/i_piston"
 bilibili = "https://space.bilibili.com/11564782"
 
+[xiami]
+display_name = "I江湖小虾米I"
+src = "https://www.speedrun.com/user/XiaoXiaMi"
+bilibili = "https://space.bilibili.com/214190676"
+
+[orcrist]
+display_name = "orcrist_gc"
+src = "https://www.speedrun.com/user/orcrist_gc"
+twitch = "https://www.twitch.tv/orcrist_gc"
+youtube = "https://www.youtube.com/channel/UCdZ-IpA7CQxd5l5hAs6IjLg"
+twitter = "https://twitter.com/orcrist_gc"
+
+[johnny]
+display_name = "Johnnyboomr"
+src = "https://www.speedrun.com/user/Johnnyboom"
+twitch = "https://www.twitch.tv/Johnnyboomr"
+youtube = "https://www.youtube.com/user/melikezznarutos"
+twitter = "https://twitter.com/johnny_decuyper"
+
+[player5]
+display_name = "Player 5"
+src = "https://www.speedrun.com/user/Player5"
+twitch = "https://www.twitch.tv/Player5"
+youtube = "https://www.youtube.com/channel/UCeiDuGZqWT4iiIXRTfhM3qQ"
+twitter = "https://www.twitter.com/Player5SR"
+
+# Stubs
+[_intro]
+display_name = "-"
+
+[_outro]
+display_name = "GG"

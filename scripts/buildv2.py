@@ -1,6 +1,8 @@
-import info
-from task import TaskType, Task, TaskManager
-from proc import ProcessHolder
+import subprocess
+from buildutil import info
+from buildutil.task import TaskType
+from buildutil.taskmgr import TaskManager
+from buildutil.proc import ProcessHolder
 import os
 import shutil
 import sys
@@ -11,13 +13,11 @@ class BuildConfig:
 
 def build_main(task_types: set[TaskType], input_segments: list[str], build_config: BuildConfig):
     # (none or start_time, none or process)
-    task_manager = TaskManager(gpu_limit=3)
+    task_manager = TaskManager(gpu_limit=2)
     processes: list[ProcessHolder] = []
     for _ in range(build_config.subprocesses):
         processes.append(ProcessHolder())
-    task_manager.print_status("Loading segment info", processes)
-    segment_names = info.load_seg_names()
-    task_manager.print_status("Initializing tasks  ", processes)
+    segment_names = info.get_seg_names()
     task_manager.initialize(segment_names)
 
     segments = []
@@ -28,15 +28,12 @@ def build_main(task_types: set[TaskType], input_segments: list[str], build_confi
         for input_segment in input_segments:
             seg_id = segment_names.index(input_segment) # exception if not found
             segments.append(seg_id)
-    task_manager.print_status("Checking what needs to be done    ", processes)
 
     for t in task_types:
         if t in (
-            TaskType.GenerateMergeVideo, 
-            TaskType.GenerateWebPage, 
-            TaskType.GenerateTimeTable,
             TaskType.DownloadTrailer,
             TaskType.DownloadIntro,
+            TaskType.DownloadTransition,
             TaskType.DownloadOutro,
             TaskType.DownloadCredits,
             TaskType.GenerateIntro,
@@ -44,24 +41,29 @@ def build_main(task_types: set[TaskType], input_segments: list[str], build_confi
             TaskType.EncodeIntro,
             TaskType.EncodeOutro,
             TaskType.EncodeCredits,
-            TaskType.EncodeTrailer
+            TaskType.EncodeTrailer,
+            TaskType.EncodeTransition,
+            TaskType.GenerateWebPage, 
+            TaskType.GenerateTimeTable,
+            TaskType.NormalizeExtra,
+
+            TaskType.MergeVideo, 
+            
         ):
-            task_manager.schedule_task(t, 0)
+            task_manager.add_task(t, 0)
         else:
             for s in segments:
-                task_manager.schedule_task(t, s)
+                task_manager.add_task(t, s)
     
-    task_manager.print_status("Queueing tasks                             ", processes)
-    task_manager.queue_scheduled_tasks()
-    task_manager.print_status(None, processes)
+    task_manager.schedule_tasks()
     if task_manager.is_queue_empty():
+        task_manager.print_status("Nothing to do", processes)
         task_manager.print_report()
         return
 
     os.makedirs("build/logs", exist_ok=True)
     os.makedirs("build/hash", exist_ok=True)
 
-    task_manager.print_status(None, processes)
     # Manage subprocesses
     while True:
         # try to start a process in all empty slots
@@ -95,22 +97,28 @@ def build_main(task_types: set[TaskType], input_segments: list[str], build_confi
 
                 else:
                     did_print_this_loop=True
-                    task_manager.print_status(None, processes)
+                    task_manager.print_status("Executing tasks", processes)
         if active_count == 0 and task_manager.is_queue_empty():
             break
         if not did_print_this_loop:
-            task_manager.print_status(None, processes)
+            task_manager.print_status("Executing tasks", processes)
 
     # Report
+    task_manager.print_status("Finished", processes)
     task_manager.print_report()
+
+    if TaskType.TestMerge in task_types:
+        print("Playing Test Video")
+        subprocess.run(["mpv", "build/merge/test.mp4"])
 
 def add_tasks_from_name(task_name, tasks: set[TaskType]):
     if task_name == "download":
         tasks.add(TaskType.Download)
+        tasks.add(TaskType.DownloadTrailer)
         tasks.add(TaskType.DownloadIntro)
+        tasks.add(TaskType.DownloadTransition)
         tasks.add(TaskType.DownloadOutro)
         tasks.add(TaskType.DownloadCredits)
-        tasks.add(TaskType.DownloadTrailer)
         return True
     if task_name == "time":
         tasks.add(TaskType.GenerateTime)
@@ -124,13 +132,6 @@ def add_tasks_from_name(task_name, tasks: set[TaskType]):
         tasks.add(TaskType.GenerateSplit_5)
         tasks.add(TaskType.GenerateSplit_6)
         tasks.add(TaskType.GenerateSplit_7)
-        tasks.add(TaskType.GenerateSplit_8)
-        tasks.add(TaskType.GenerateSplit_9)
-        tasks.add(TaskType.GenerateSplit_a)
-        tasks.add(TaskType.GenerateSplit_b)
-        tasks.add(TaskType.GenerateSplit_c)
-        tasks.add(TaskType.GenerateSplit_d)
-        tasks.add(TaskType.GenerateSplit_e)
         tasks.add(TaskType.GenerateIntro),
         tasks.add(TaskType.GenerateOutro)
         return True
@@ -140,16 +141,7 @@ def add_tasks_from_name(task_name, tasks: set[TaskType]):
         tasks.add(TaskType.EncodeOutro)
         tasks.add(TaskType.EncodeTrailer)
         tasks.add(TaskType.EncodeCredits)
-        return True
-    if task_name == "intro":
-        tasks.add(TaskType.DownloadIntro)
-        tasks.add(TaskType.GenerateIntro)
-        tasks.add(TaskType.EncodeIntro)
-        return True
-    if task_name == "outro":
-        tasks.add(TaskType.DownloadOutro)
-        tasks.add(TaskType.GenerateOutro)
-        tasks.add(TaskType.EncodeOutro)
+        tasks.add(TaskType.EncodeTransition)
         return True
     if task_name in ("table", "timetable"):
         tasks.add(TaskType.GenerateTimeTable)
@@ -157,8 +149,15 @@ def add_tasks_from_name(task_name, tasks: set[TaskType]):
     if task_name in ("website", "webpage", "web"):
         tasks.add(TaskType.GenerateWebPage)
         return True
+    if task_name in ("normalize", "audio"):
+        tasks.add(TaskType.Normalize)
+        tasks.add(TaskType.NormalizeExtra)
+        return True
+    if task_name == "test":
+        tasks.add(TaskType.TestMerge)
+        return True
     if task_name in ("merge", "render"):
-        tasks.add(TaskType.GenerateMergeVideo)
+        tasks.add(TaskType.MergeVideo)
         return True
     return False
 

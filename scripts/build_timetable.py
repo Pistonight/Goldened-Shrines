@@ -31,14 +31,12 @@ TABLE_AFTER="""
     </tbody>
 </table>
 """
-
-import info
-import tc
+from buildutil import info, timecode
 
 def generate_table():
     with open("docs/latest.html", "w+", encoding="utf-8") as out_file:
         out_file.write(TABLE_BEFORE)
-        seg_names = info.load_seg_names()
+        seg_names = info.get_seg_names()
         runner_html_map = info.load_runner_html_map()
 
         for seg in seg_names:
@@ -57,11 +55,11 @@ def generate_table():
             out_file.write(f"<td>{split_name}</td>\n")
             # Segment Time
             seg_frames = seg_time_info["segment_time"]
-            seg_time = tc.frm_to_strh(seg_frames)
+            seg_time = timecode.frm_to_strh(seg_frames)
             out_file.write(f"<td>{seg_time}</td>\n")
             # Split Time
             split_frames = seg_time_info["start_frame"] + seg_frames
-            split_time = tc.frm_to_strh(split_frames)
+            split_time = timecode.frm_to_strh(split_frames)
             out_file.write(f"<td>{split_time}</td>\n")
             # Runner
             runner = seg_info["runner"]

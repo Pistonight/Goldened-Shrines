@@ -17,20 +17,22 @@ The project uses 120 Shrine segments, 12 Warp segments, 1 Tower segment, 1 Plate
 
 See [the reference page](docs/reference/README.md) for examples of the start/end frames. In the descriptions below, the first and last frames are inclusive.
 
+Note that some parts are different than where you normally split. This is to avoid issues with audio in the final video
+
 | Timing | First Frame|Last Frame|
 |--|--|--|
 | **First segment (Ja Baij)** |First frame of the run|Last frame before cage break|
-|**Tower segment**|First frame of cage break|Last frame where the terminal is not glowing|
-|**Magnesis segment (Oman Au)**|First frame of an orange glow being visible on the tower terminal|Last frame before cage break|
+|**Tower segment**|First frame of cage break|Last frame where screen is not completely black after skipping the cutscene|
+|**Magnesis segment (Oman Au)**|First frame of screen completely black after skipping the cutscene|Last frame before cage break|
 |**Shrine-to-Shrine segments**|First frame of cage breaking |Last frame before cage break|
-|**Paraglider segment**|First frame of cage breaking|Frame where the triangle is smaller|
-|**Paraglider-shrine segment (Bosh Kala)**|The frame after the triangle being smaller|Last frame before cage break|
+|**Paraglider segment**|First frame of cage breaking|Frame before screen is completely black after skipping the third cutscene|
+|**Paraglider-shrine segment (Bosh Kala)**|First Frame where the screen is completely black after skipping the third cutscene|Last frame before cage break|
 |**Shrine-to-warp segments**|First frame of cage break|The frame before the screen is completely dark after warp animation|
 |**Warp-to-shrine segments**|First frame of screen is completely dark|Last frame before cage break|
-|**Castle segment**|First frame of cage break|Last frame of windblight not exploding|
-|**Blights segment**|First frame of windblight exploding|Last frame before the screen is completely dark after thunderblight is dead|
-|**Calamity segment**|First frame of screen being completely dark after thunderblight is dead|Last frame of screen not being completely white after calamity is dead
-|**Dark beast segment**|First frame of screen being completely white after calamity is dead|Last frame of dark beast's health bar is not white after firing the final shot
+|**Castle segment**|First frame of cage break|Last frame of not completely black after windblight dead|
+|**Blights segment**|First frame of completely black after windblight dead|Last frame before the screen is completely dark after skipping calamity cutscene|
+|**Calamity segment**|First frame of screen being completely dark after skipping calamity cutscene|Last frame of screen not being completely white after skipping calamity death cutscene
+|**Dark beast segment**|First frame of screen being completely white after skipping calamity death cutscene|Last frame of dark beast's health bar is not white after firing the final shot
 
 I have a script that will splice and time the segment submissions. **I am the single source of truth for timing** to avoid any confusion.
 
@@ -97,12 +99,6 @@ Building this project is very intensive on the hardware. A CPU with 8 or 16 core
 
 ### Install Tools
 
-#### Python
-Python 3 is needed. Install these modules
-```
-python3 -m pip install toml
-```
-
 #### yt-dlp 
 A tool to download videos. https://github.com/yt-dlp/yt-dlp
 
@@ -111,8 +107,14 @@ make sure `yt-dlp` is in `PATH`
 #### ffmpeg
 A tool to process videos. https://ffmpeg.org/download.html
 
-make sure `ffmpeg.exe`, `ffplay.exe` and `ffprobe.exe` is are `PATH`
+make sure `ffmpeg.exe`, `ffplay.exe` and `ffprobe.exe` is are in `PATH`
 
+#### Python and Pip Modules
+Python 3 is needed. Install these modules
 
+- toml (needed for reading and writing TOML files)
+- ffmpeg-normalize (needed for normalizing audio level)
 
-need log output, html generation, and head/tail video editing
+`python3 -m pip install toml ffmpeg-normalize`
+
+If you are on windows, you might need to add the python module directory to `PATH`

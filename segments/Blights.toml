@@ -1,3 +1,4 @@
 link = "https://storage.googleapis.com/goldened-shrines-segments/120bBlights.mp4"
-runner = "iTNTPiston"
+runner = "piston"
 icon = "Castle"
+profile = "piston"

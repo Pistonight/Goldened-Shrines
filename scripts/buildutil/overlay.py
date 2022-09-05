@@ -1,9 +1,8 @@
 """Generate split images"""
 # overlay.py <seg name> <seed> <step>
-import info
-from tc import frm_to_strh
+from buildutil import info
+from buildutil.timecode import frm_to_strh
 from PIL import Image, ImageDraw, ImageFont
-import sys
 
 BACKGROUND_PATH="docs/images/Background.png"
 TIMER_FONT_PATH="docs/fonts/Calibri-Bold.ttf"
@@ -41,7 +40,8 @@ def get_base_image(seg_name, seg_time_info, fonts):
     image = Image.open(BACKGROUND_PATH)
     draw = ImageDraw.Draw(image)
 
-    runner = info.get_seg_info(seg_name, "runner")
+    runner = info.get_seg_info(seg_name)["runner"]
+    runner_name = info.get_runners_info()[runner]["display_name"]
     segment_num = info.get_3char_seg_num(seg_time_info["shrine_number"])
 
     # (name, seg_time, split_time, icon)
@@ -64,9 +64,9 @@ def get_base_image(seg_name, seg_time_info, fonts):
                 split_data["icon"]
             ))
 
-    runner_width = draw.textlength(runner, font=runner_font)
+    runner_width = draw.textlength(runner_name, font=runner_font)
     x = int(300+((312-runner_width)/2))
-    draw.text((x, 212), runner, fill=COLOR_GOLD,font=runner_font)
+    draw.text((x, 212), runner_name, fill=COLOR_GOLD,font=runner_font)
 
     draw.text((302,172), segment_num, fill=COLOR_BLACK,font=number_font)
 
@@ -136,17 +136,4 @@ def draw_frame(base_image, start_frame, frame, fonts):
         draw.text((x,172), seg_time, fill=COLOR_GOLD, font=number_font)
     return image
 
-def generate_overlay(segment, seed, step):
-    fonts = load_fonts()
-    time_info = info.get_seg_time_info(segment, None)
-    base = get_base_image(segment, time_info, fonts)
-    start = time_info["start_frame"]
-    for i in range(seed, time_info["segment_time"], step):
-        frame_image = draw_frame(base, start, i, fonts)
-        info.set_seg_split_overlay_frame(segment, frame_image, i)
 
-if __name__ == "__main__":
-    segment = sys.argv[1]
-    seed = int(sys.argv[2])
-    step = int(sys.argv[3])
-    generate_overlay(segment, seed, step)

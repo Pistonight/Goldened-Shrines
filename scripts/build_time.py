@@ -1,27 +1,12 @@
 """Compute time.toml for segments"""
 # time.py <seg name> <context> <context> <context> <context> <context> <context>
-import info
-import subprocess
+from buildutil import info, time
 import sys
 
-def execute_get_frame_count(seg_name):
-    result = subprocess.run(
-        ["ffprobe.exe","-i",
-         info.get_seg_source_mp4(seg_name),
-         "-v", "error",
-         "-count_packets",
-         "-select_streams", "v:0",
-         "-show_entries", "stream=nb_read_packets",
-         "-of", "csv=p=0"],
-        text=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.DEVNULL)
-    if result.returncode != 0:
-        sys.exit(result.returncode)
-    return int(result.stdout)
+
 
 def compute_time(seg_name: str, context: list[str]):
-    seg_time = execute_get_frame_count(seg_name)
+    seg_time = time.execute_seg_frame_count(seg_name)
     
     before = None
     for context_name in context:
@@ -34,9 +19,9 @@ def compute_time(seg_name: str, context: list[str]):
         shrine_number = 1
         before_obj = None
     else:
-        before_obj = info.get_seg_time_info(before, None)
+        before_obj = info.get_seg_time_info(before)
         start_frame = before_obj["start_frame"] + before_obj["segment_time"]
-        if seg_name.find("Tower") != -1 or seg_name.find("Warp") != -1 or seg_name.find("Plateau") != -1:
+        if before.find("Tower") != -1 or before.find("Warp") != -1 or before.find("Plateau") != -1:
             shrine_number = before_obj["shrine_number"]
         else:
             shrine_number = min(before_obj["shrine_number"]+1, 120)
@@ -46,7 +31,7 @@ def compute_time(seg_name: str, context: list[str]):
         for context_name in context:
             splits.append({
                 "name": context_name,
-                "icon": info.get_seg_info(context_name, "icon")
+                "icon": info.get_seg_info(context_name)["icon"]
             })
     else:
         splits = []
@@ -67,7 +52,7 @@ def compute_time(seg_name: str, context: list[str]):
         if len(splits) < 6:
             splits.append({
                 "name": context[-1],
-                "icon": info.get_seg_info(context[-1], "icon")
+                "icon": info.get_seg_info(context[-1])["icon"]
             })
     
     output_obj = {

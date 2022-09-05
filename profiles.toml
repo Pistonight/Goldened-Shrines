@@ -1,0 +1,5 @@
+[piston]
+audio_normalize_target = "-35"
+
+[pfive_mic]
+audio_normalize_target = "-21"

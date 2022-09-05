@@ -1,14 +1,13 @@
-import info
-import tc
+from buildutil import info, timecode
 import sys
 GENERATOR_METATITLE = "<!-- GENERATOR METATITLE -->"
 GENERATOR_TITLE = "<!-- GENERATOR TITLE -->"
 GENERATOR_TABLE = "<!-- GENERATOR TABLE -->"
 
 def generate_index_html(last_segment):
-    time_info = info.get_seg_time_info(last_segment, None)
+    time_info = info.get_seg_time_info(last_segment)
     final_time_frames = time_info["start_frame"] + time_info["segment_time"]
-    final_time_string = tc.frm_to_strh(final_time_frames, show_ms=False)
+    final_time_string = timecode.frm_to_strh(final_time_frames, show_ms=False)
     lines: list[str] = []
 
     title = f"All Shrines in {final_time_string} by The BOTW Community"

@@ -1,3 +1,4 @@
 link = "https://storage.googleapis.com/goldened-shrines-segments/023-Daqa-Koh.mp4"
-runner = "iTNTPiston"
+runner = "piston"
 icon = "Shrine"
+profile = "piston"
