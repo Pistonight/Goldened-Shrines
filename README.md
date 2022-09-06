@@ -43,6 +43,7 @@ For your segment to be considered, it must meet these requirements:
 2. **Must be done in a real run or in a setting similar to a real run**
     - Segments from a time-attack (TA) run is allowed if the segment doesn't pause the run
     - Reloading and grinding a segment over and over again is not allowed. This is to keep loads as consistent as possible to a real run
+    - Runs from other categories are allowed as long as conditions are consistent
 3. **Must be recorded at at least 30fps**
 4. **Must be unspliced**
     - You cannot splice together the movement to a shrine with the movement inside a shrine, for example, even if both are done in a real run
@@ -66,14 +67,16 @@ For your segment to be considered, it must meet these requirements:
 
 Additionally, it's preferable if the segment also meets the following:
 
-1. Recorded at 1080p. Lower resolutions are allowed, but your segment may be rejected if the quality is too low
+1. Recorded at 1080p, at least 3Mbps. Lower resolution/bitrates are allowed, but your segment may be rejected if the quality is too low
 2. Recorded at exactly 30fps. Higher fps will be converted or re-encoded to 30fps beforing timing, which may result in inaccurate time but that's the best we can do
 3. Recorded using a capture device. If it's recorded with a camera over the console screen, it may be rejected if the recording quality is too low
 4. Played on switch. Wii U is allowed if there's no major inconsistencies between switch and Wii U for that segment
-5. Have clean gameplay audio only. This is a very minor factor and your segment will not be rejected solely because you have another audio source. However, it is recommended to setup a track in your recording software that only captures game audio, so it can be separated from the other audio sources
+5. Have clean gameplay audio only. 
+   - This will allow the render software to automatically adjust the audio level to be consistent across the entire run. If you have background music or mic audio, the audio level needs to be manually adjusted
+   - This is a very minor factor and your segment will not be rejected solely because of bad audio. However, it is recommended to setup a track in your recording software that only captures game audio, so it can be separated from the other audio sources
 
 #### How to submit
-Please DM submissions to me on discord.
+Please DM submissions to me on discord. In your DM please include 1) link to the video and 2) list of segments from that video
 
 Needless to say, your segment also needs to be at least as fast as the current segment. In case of a tie, the one with better movement will be chosen, or you can convince me to use yours instead of the existing one.
 
@@ -83,8 +86,8 @@ By submitting a segment, you also automatically agree to let me store your segme
 This is how this project works
 
 Submission:
-1. People submit video containing the segment to me
-2. I look at the video, extract the segment from the video and re-encoding it if needed
+1. People submit video containing the segment(s) to me
+2. I extract the segment(s) from the video and crop the video if needed
 3. I time the segment, reject if slower than existing
 4. If accepted, I make sure the audio level is good when mixed with other segments
 5. I upload the segment to Google Cloud and include the segment information in the project
