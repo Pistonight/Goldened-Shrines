@@ -2,10 +2,10 @@ import sys
 import subprocess
 from buildutil import paths
 
-def execute_seg_frame_count(seg_name):
+def execute_frame_count(file):
     result = subprocess.run(
         ["ffprobe.exe","-i",
-         paths.seg_download_mp4(seg_name),
+         file,
          "-v", "error",
          "-count_packets",
          "-select_streams", "v:0",
@@ -17,3 +17,6 @@ def execute_seg_frame_count(seg_name):
     if result.returncode != 0:
         sys.exit(result.returncode)
     return int(result.stdout)
+
+def execute_seg_frame_count(seg_name):
+    return execute_frame_count(paths.seg_download_mp4(seg_name))

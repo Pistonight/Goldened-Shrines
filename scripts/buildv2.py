@@ -66,7 +66,7 @@ def build_main(task_types: set[TaskType], input_segments: list[str], build_confi
 
     os.makedirs("build/logs", exist_ok=True)
     os.makedirs("build/hash", exist_ok=True)
-
+    task_manager.print_status("Starting", processes)
     # Manage subprocesses
     while True:
         # try to start a process in all empty slots

@@ -102,6 +102,12 @@ def encode_args(input_mp4, input_png, output_mp4, segment_name):
         out_v_stream = "[fade]"
         out_a_stream = "[aout]"
 
+    if segment_name == "_trailer":
+        filter_complex+=f"; {out_v_stream}fade=t=out:d=1:st=35 [fade]; [0:a]afade=t=out:st=35:d=1 [aout]"
+        out_v_stream = "[fade]"
+        out_a_stream = "[aout]"
+
+
     if segment_name == "_credits":
         filter_complex+=f"; {out_v_stream}fade=t=in:d=1.5:st=0:c=white [fade]"
         out_v_stream = "[fade]"

@@ -1,5 +1,5 @@
 from buildutil.task import ITaskDefinition, TaskType
-from buildutil import paths
+from buildutil import paths, time, timecode
 import os
 
 class TaskDefTestMerge(ITaskDefinition):
@@ -11,8 +11,10 @@ class TaskDefTestMerge(ITaskDefinition):
         self.before_name = before_name
         self.after_name = after_name
 
+    def is_gpu(self):
+        return True
     def get_description(self):
-        return f"Test merged segment {self.segment_name}"
+        return f"Render test segment {self.segment_name}"
     def get_color(self):
         return "\033[1;36m"
     def get_dependencies(self):
@@ -43,33 +45,27 @@ class TaskDefTestMerge(ITaskDefinition):
 
     def prepare(self):
         os.makedirs("build/merge", exist_ok=True)
-        files = []
-        if self.segment == 0:
-            files.append(paths.seg_normalized_mp4("_trailer"))
-            files.append(paths.seg_normalized_mp4("_intro"))
-        else:
-            files.append(paths.seg_normalized_mp4(self.before_name))
-        files.append(paths.seg_normalized_mp4(self.segment_name))
-        if self.segment == self.total_segment - 1:
-            files.append(paths.seg_normalized_mp4("_outro_transition"))
-            files.append(paths.seg_normalized_mp4("_outro"))
-            files.append(paths.seg_normalized_mp4("_credits"))
-        else:
-            files.append(paths.seg_normalized_mp4(self.after_name))
-        with open("build/merge/testlist.txt", "w+", encoding="utf-8") as out_file:
-            for file in files:
-                out_file.write(f"file ../../{file}\n")
 
     def _exe_args(self):
+        has_beginning = "0"
+        has_ending = "0"
+        segments = []
+        if self.segment == 0:
+            has_beginning = "1"
+        else:
+            segments.append(self.before_name)
+        segments.append(self.segment_name)
+        if self.segment == self.total_segment - 1:
+            has_ending = "1"
+        else:
+            segments.append(self.after_name)
 
-        return [
-            "ffmpeg",
-            "-y",
-            "-f", "concat",
-            "-safe", "0",
-            "-i", "build/merge/testlist.txt",
-            "-c", "copy",
-            "build/merge/test.mp4"
+        args = [
+            "python3", "scripts/build_merge.py",
+            has_beginning, has_ending,
+            "build/merge/test.mp4",
+            "build/merge/middle.mp4",
+            "build/merge/testlist.txt"
         ]
-
-
+        args.extend(segments)
+        return args

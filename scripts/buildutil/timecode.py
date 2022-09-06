@@ -5,6 +5,9 @@ FRAME_PER_SECOND = 30
 SECOND_PER_MINUTE = 60
 MINUTE_PER_HOUR = 60
 
+def frm_to_sec(frames):
+    return frames / FRAME_PER_SECOND
+
 def sec_to_strh(secs):
 
     minute_seconds = secs % SECOND_PER_MINUTE

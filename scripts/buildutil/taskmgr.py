@@ -161,6 +161,8 @@ class TaskManager:
         if task.is_gpu():
             self.gpu_usage-=1
         self.completed+=1
+        if task.is_failed():
+            self.failed+=1
         task.update_hash()
 
     def is_queue_empty(self):

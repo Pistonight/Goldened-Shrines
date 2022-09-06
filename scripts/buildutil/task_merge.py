@@ -8,6 +8,8 @@ class TaskDefMerge(ITaskDefinition):
         self.total_segment = len(segment_names)
         self.segment_names = segment_names
 
+    def is_gpu(self):
+        return True
     def get_description(self):
         return f"Merging all segments"
     def get_color(self):
@@ -31,30 +33,18 @@ class TaskDefMerge(ITaskDefinition):
 
     def prepare(self):
         os.makedirs("build/merge", exist_ok=True)
-        files = []
-        files.append(paths.seg_normalized_mp4("_trailer"))
-        files.append(paths.seg_normalized_mp4("_intro"))
-
-        for i in range(self.total_segment):
-            files.append(paths.seg_normalized_mp4(self.segment_names[i]))
-        
-        files.append(paths.seg_normalized_mp4("_outro_transition"))
-        files.append(paths.seg_normalized_mp4("_outro"))
-        files.append(paths.seg_normalized_mp4("_credits"))
-        with open("build/merge/mergelist.txt", "w+", encoding="utf-8") as out_file:
-            for file in files:
-                out_file.write(f"file ../../{file}\n")
 
     def _exe_args(self):
 
-        return [
-            "ffmpeg",
-            "-y",
-            "-f", "concat",
-            "-safe", "0",
-            "-i", "build/merge/mergelist.txt",
-            "-c", "copy",
-            "build/merge/merged.mp4"
+        args = [
+            "python3", "scripts/build_merge.py",
+            "1", "1",
+            "build/merge/merged.mp4",
+            "build/merge/middle.mp4",
+            "build/merge/mergelist.txt"
         ]
+        args.extend(self.segment_names)
+
+        return args
 
 
