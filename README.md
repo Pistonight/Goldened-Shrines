@@ -1,5 +1,5 @@
 # Goldened-Shrines
-BOTW All Shrines Community Sum-of-Best (SoB) Project
+BOTW All Shrines Community Sum-of-Best (SoB) Project. Home page: https://gold.itntpiston.app/
 
 ## About the Project
 ### Introduction

@@ -1,0 +1,4 @@
+link = "https://storage.googleapis.com/goldened-shrines-segments/001.Tower.mp4"
+runner = "piston"
+icon = "Tower"
+profile = "shrine_clean"

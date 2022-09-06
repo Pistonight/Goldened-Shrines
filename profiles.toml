@@ -14,7 +14,7 @@ audio_normalize_target = "-25"
 audio_normalize_target = "-35"
 
 [boss]
-audio_normalize_target = "-25"
+audio_normalize_target = "-26"
 
 # Runner specific (for different mic audio)
 [pfive_mic]

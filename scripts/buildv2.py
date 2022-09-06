@@ -84,6 +84,7 @@ def build_main(task_types: set[TaskType], input_segments: list[str], build_confi
                         task.mark_complete(True)
                         task_manager.on_finish_task(task)
         # try joining processes
+        task_manager.print_status("Executing tasks", processes)
         active_count = 0
         did_print_this_loop = False
         for process_holder in processes:
