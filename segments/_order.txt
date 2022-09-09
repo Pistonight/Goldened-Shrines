@@ -17,6 +17,7 @@ KayraMah
 DaqaKoh
 QuaRaym
 TahMuhl
+SahDahaj
 DahHesho
 KahMael
 RitaagZumo
@@ -45,9 +46,10 @@ QukahNata
 ShodaSah
 WarpKehNamut
 KeehaYoog
-KemaZoos
 KuhTakkar
 RaqaZunzo
+KemaZoos
+ThoKayu
 KemaKosassa
 SasaKai
 DakoTah
@@ -58,6 +60,7 @@ DilaMaag
 SumaSahma
 IshtoSoh
 ShaeKatha
+ShoqaTatone
 KaoMakagh
 YaNaga
 ShaeLoya
@@ -69,6 +72,8 @@ WarpTenaKosah
 AkhVaquot
 BareedaNaag
 VooLota
+ShaWarvo
+ShadaNaw
 HiaMiu
 RokUwog
 ShaGehma
