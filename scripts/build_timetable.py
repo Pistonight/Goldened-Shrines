@@ -51,7 +51,10 @@ def generate_table():
             shrine_number = info.get_3char_seg_num(seg_time_info["shrine_number"])
             out_file.write(f"<td>{shrine_number}</td>\n")
             # Name
-            split_name = info.get_seg_spaced_name(seg)
+            if "display_name" in seg_info:
+                split_name = seg_info["display_name"]
+            else:
+                split_name = info.get_seg_spaced_name(seg)
             out_file.write(f"<td>{split_name}</td>\n")
             # Segment Time
             seg_frames = seg_time_info["segment_time"]

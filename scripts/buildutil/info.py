@@ -2,6 +2,8 @@ import toml
 import re
 import functools
 from buildutil import paths
+
+@functools.cache
 def get_seg_spaced_name(segment:str):
     segment_name = segment.split(".", 1)[0]
     #https://www.geeksforgeeks.org/python-split-camelcase-string-to-individual-strings/

@@ -29,7 +29,7 @@ TahMuhl
 SahDahaj
 
 DahHesho
-
+KenaiShakah
 KahMael
 RitaagZumo
 KatosaAug
@@ -48,8 +48,8 @@ TahnoOah
 JitanSami
 KorguChideh
 MuwoJeem
-
 KahYah
+
 ChaasQeta
 WarpMezzaLo.2
 NeezYohma
@@ -66,15 +66,15 @@ QukahNata
 ShodaSah
 
 WarpKehNamut
-
+MoggLatan
 KeehaYoog
 KuhTakkar
 RaqaZunzo
-
+DaqoChisay
 KemaZoos
 ThoKayu
 
-
+WarpKeehaYoog
 KemaKosassa
 
 SasaKai
@@ -90,8 +90,8 @@ ShoqaTatone
 KaoMakagh
 
 YaNaga
-
-
+WarpKuhTakkar.1
+MijahRokee
 ShaeLoya
 
 DunbaTaag
@@ -104,11 +104,11 @@ BareedaNaag
 VooLota
 ShaWarvo
 
-
+MozoShenno
 ShadaNaw
 HiaMiu
 ToQuomo
-
+WarpShadaNaw.1
 RokUwog
 ShaGehma
 
@@ -122,7 +122,7 @@ MonyaToma
 
 RonaKachta
 WarpKuhTakkar.2
-
+JolooNah
 JeeNoh
 DahKaso
 RotaOoh
