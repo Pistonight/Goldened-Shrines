@@ -8,10 +8,10 @@ BoshKala
 WahgoKatta
 HilaRao
 KayaWan
-
+DakaTuss
 TalohNaeg
 
-
+MezzaLo
 SohKofi
 ShehRata
 MirroShaz
@@ -39,7 +39,7 @@ ShaeMosah
 ShoraHah
 
 ZunaKai
-
+TuKaloh
 WarpMezzaLo.1
 DowNaeh
 
@@ -103,7 +103,7 @@ AkhVaquot
 BareedaNaag
 VooLota
 ShaWarvo
-
+MakaRah
 MozoShenno
 ShadaNaw
 HiaMiu
