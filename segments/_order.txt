@@ -25,7 +25,7 @@ KayraMah
 DaqaKoh
 QuaRaym
 TahMuhl
-
+MoaKeet
 SahDahaj
 
 DahHesho
@@ -37,12 +37,12 @@ KatosaAug
 WarpDaqaKoh
 ShaeMosah
 ShoraHah
-
+GoraeTorr
 ZunaKai
 TuKaloh
 WarpMezzaLo.1
 DowNaeh
-
+KamUrog
 MyahmAgana
 TahnoOah
 JitanSami
@@ -64,7 +64,7 @@ SheeVaneer
 SheeVenath
 QukahNata
 ShodaSah
-
+ShaiUtoh
 WarpKehNamut
 MoggLatan
 KeehaYoog
@@ -76,7 +76,7 @@ ThoKayu
 
 WarpKeehaYoog
 KemaKosassa
-
+ShoDantu
 SasaKai
 DakoTah
 KayNoh
@@ -130,7 +130,7 @@ RotaOoh
 SheemDagoze
 
 NoyaNeha
-
+KatahChuki
 Castle
 Blights
 Calamity
