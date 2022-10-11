@@ -58,9 +58,9 @@ RuccoMaag
 ShaiYota
 WarpJitanSami
 TawaJinn
-
+TotoSah
 HaDahamar
-
+ReeDahee
 SheeVaneer
 SheeVenath
 QukahNata
@@ -94,7 +94,7 @@ YaNaga
 WarpKuhTakkar.1
 MijahRokee
 ShaeLoya
-
+TohYahsa
 DunbaTaag
 WarpShaeLoya
 TenaKosah
@@ -127,7 +127,7 @@ JolooNah
 JeeNoh
 DahKaso
 RotaOoh
-
+KaamYatak
 SheemDagoze
 ZaltaWa
 NoyaNeha
