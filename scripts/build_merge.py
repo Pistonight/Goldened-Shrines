@@ -4,6 +4,11 @@ import subprocess
 import sys
 from buildutil import paths, timecode, time
 
+# Adjust the audio patch position so it's more accurate
+# If you hear the audio patch before where it's supposed to be, decrease this
+# If you hear the audio patch after where it's supposed to be, increase this
+APATCH_SHIFT_ADJUSTMENT = 0.75
+
 def execute_merge(segment_names,has_beginning,has_ending,output_mp4,middle_mp4,output_filelist):
     if not has_beginning and not has_ending:
         middle_mp4 = output_mp4
@@ -33,7 +38,7 @@ def execute_merge(segment_names,has_beginning,has_ending,output_mp4,middle_mp4,o
         patch_filters.append(f"[{i}:a]atrim=start={trim_start}:duration=200ms, afade=t=in:st=0:d=100ms, adelay={delay_start}|{delay_start}[{i}apatch]")
         amix_inputs.append(f"[{i}apatch]")
         
-        total_previous_frames+=input_frames+1 # for some reason need to add 1 to make the offset right
+        total_previous_frames+=input_frames+APATCH_SHIFT_ADJUSTMENT 
 
 
     concat_filter = f"{concat_inputs}concat=n={concat_n}:v=1:a=1 [vcon][acon]"
