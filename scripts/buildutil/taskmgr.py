@@ -171,7 +171,12 @@ class TaskManager:
     def print_status(self, step_description, process_holders: list[ProcessHolder]):
         print(f"\033[{self.last_up_line}A")
         line = 2
-        progress = f"{step_description}: {self.completed}/{self.total} Completed ({self.skipped} Cache Hit). {self.failed} Failed.   "
+        if self.total == 0:
+            percentage = ""
+        else:
+            percentage_number = ((self.completed-self.skipped)/(self.total-self.skipped))*100
+            percentage = f"{percentage_number:.2f}% "
+        progress = f"{percentage}{step_description}: {self.completed}/{self.total} Completed ({self.skipped} Cache Hit). {self.failed} Failed.   "
         
         elapsed = self.process_holder.elapsed_time()
         progress = self.format_status_line(progress,"")
