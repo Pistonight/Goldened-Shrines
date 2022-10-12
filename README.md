@@ -56,8 +56,10 @@ For your segment to be considered, it must meet these requirements:
       - Different time of day
       - Different health/max health
       - Different stamina only allowed if you do not use more than 7/5 stamina wheels at any given time in your segment
+        - Exception: Allowed if you used a small amount of extra stamina for sprinting only (e.g. not infinitely midair)
       - Getting unloaded shrine
     - Examples of inconsistencies not allowed:
+      - Bombs+
       - Not getting shield of minds eye in Taloh Naeg segment
       - Getting medoh cutscene before entering Akh Vaquot and therefore have a faster Bareeda Naeg segment
       - Skipping setting time of day because it happened to be the right time of day during the run for some reason

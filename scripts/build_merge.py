@@ -7,7 +7,7 @@ from buildutil import paths, timecode, time
 # Adjust the audio patch position so it's more accurate
 # If you hear the audio patch before where it's supposed to be, decrease this
 # If you hear the audio patch after where it's supposed to be, increase this
-APATCH_SHIFT_ADJUSTMENT = 0.75
+APATCH_SHIFT_ADJUSTMENT = 0.77
 
 def execute_merge(segment_names,has_beginning,has_ending,output_mp4,middle_mp4,output_filelist):
     if not has_beginning and not has_ending:

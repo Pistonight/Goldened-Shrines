@@ -171,7 +171,7 @@ class TaskManager:
     def print_status(self, step_description, process_holders: list[ProcessHolder]):
         print(f"\033[{self.last_up_line}A")
         line = 2
-        if self.total == 0:
+        if self.total == 0 or self.total-self.skipped <= 0:
             percentage = ""
         else:
             percentage_number = ((self.completed-self.skipped)/(self.total-self.skipped))*100
