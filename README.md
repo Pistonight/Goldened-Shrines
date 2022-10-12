@@ -8,7 +8,7 @@ The goal of the project is to find out the fastest time humanly possible to comp
 Unlike Best Theoretical Time (BTT), another BOTW project similar to this that was focused on the fastest time possible using TAS-like strats, this project focuses on strats that are reproduced consistently and viable to implement in an RTA run.
 
 ### Route
-The project uses the [All Shrines v3.3](https://celer.itntpiston.app/#/gh/iTNTPiston/as3) route
+The project uses the [All Shrines v3.3](https://celer.itntpiston.app/#/gh/iTNTPiston/botw-routes/as33) route
 
 ### Segment and Submission
 This section explains how segments work and how you can submit your time to the project
